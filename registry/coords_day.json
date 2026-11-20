@@ -1,0 +1,61 @@
+{
+  "id": "coords_day",
+  "kind": "mod",
+  "name": "Coords and Day",
+  "summary": "Shows your XYZ position and the world day, with settings to move and style it.",
+  "description": "Shows your XYZ position and the world day, with settings to move and style it.",
+  "authors": [
+    "CGRLabs"
+  ],
+  "owners": [
+    "fohystanXD"
+  ],
+  "license": "All Rights Reserved",
+  "source": "https://github.com/fohystanXD/DAY-COUNTER.git",
+  "icon": "https://wanderstest3.github.io/Pojarush_Test3-Mods/mods/coords_day/icon.png",
+  "versions": [
+    {
+      "version": "0.2.0",
+      "published": "2026-11-20",
+      "api": "0.1",
+      "side": "client",
+      "capabilities": [
+        "game-read",
+        "render",
+        "storage",
+        "ui"
+      ],
+      "game": "26.3",
+      "file": {
+        "name": "coords_day-0.2.0.hmod",
+        "url": "https://github.com/WandersTest3/Pojarush_Test3-Mods/releases/download/coords_day-0.2.0/coords_day-0.2.0.hmod",
+        "size": 26178,
+        "sha256": "5b5790135f328c49c466e605f03a967536dcd4c1b4fcbe56edea375ca9859e11"
+      }
+    }
+  ],
+  "site": {
+    "categories": [
+      "utility",
+      "hud",
+      "game-mechanics"
+    ],
+    "icon_file": "mods/coords_day/icon.png",
+    "gallery": [
+      "mods/coords_day/g-d5c11ed125.webp",
+      "mods/coords_day/g-fae571443e.webp",
+      "mods/coords_day/g-88ea344c32.webp"
+    ],
+    "featured": null,
+    "banner": null,
+    "description_image": null,
+    "min_pojarush": {
+      "0.2.0": "2.0.0"
+    },
+    "code": true,
+    "contact": {},
+    "translations": {},
+    "created": "2026-11-20T11:21:30Z",
+    "updated": "2026-11-20T11:21:30Z"
+  }
+}
