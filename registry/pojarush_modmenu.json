@@ -1,0 +1,63 @@
+{
+  "id": "pojarush_modmenu",
+  "kind": "mod",
+  "name": "PH Mod Menu",
+  "summary": "A Mod Menu like Fabric's: the installed mods with icon, name and description on the left, and the picked one's version, authors, license, links and settings on",
+  "description": "A Mod Menu like Fabric's: the installed mods with icon, name and description on the left, and the picked one's version, authors, license, links and settings on the right, with a search box. Open it with its icon beside Accessibility on the title screen and the pause menu, or with M (Controls > Key Binds).",
+  "authors": [
+    "Wanders_Test3"
+  ],
+  "owners": [
+    "WandersTest3"
+  ],
+  "license": "Mod Test3 License V1.0",
+  "source": "https://github.com/WandersTest3/Pojarush_Test3/tree/main/horizon/mods/pojarush-modmenu",
+  "icon": "https://wanderstest3.github.io/Pojarush_Test3-Mods/mods/pojarush_modmenu/icon.png",
+  "versions": [
+    {
+      "version": "1.3.0",
+      "published": "2026-11-20",
+      "changelog": "- Initial release",
+      "api": "0.1",
+      "side": "client",
+      "capabilities": [
+        "input",
+        "ui"
+      ],
+      "game": "26.3",
+      "file": {
+        "name": "pojarush_modmenu-1.3.0.hmod",
+        "url": "https://github.com/WandersTest3/Pojarush_Test3-Mods/releases/download/pojarush_modmenu-1.3.0/pojarush_modmenu-1.3.0.hmod",
+        "size": 10608,
+        "sha256": "3f42624d9b698c97930deed0414fd8214347f617cbca946082bd7a293c9eef52"
+      }
+    }
+  ],
+  "site": {
+    "categories": [
+      "hud",
+      "utility",
+      "library"
+    ],
+    "icon_file": "mods/pojarush_modmenu/icon.png",
+    "banner": "mods/pojarush_modmenu/banner.webp",
+    "code": true,
+    "contact": {
+      "homepage": "https://github.com/WandersTest3/Pojarush_Test3",
+      "issues": "https://github.com/WandersTest3/Pojarush_Test3/issues",
+      "sources": "https://github.com/WandersTest3/Pojarush_Test3/tree/main/horizon/mods/pojarush-modmenu"
+    },
+    "translations": {
+      "pt_br": {
+        "name": "",
+        "summary": "Um Mod Menu como o do Fabric: os mods instalados com ícone, nome e descrição à esquerda, e a versão, os autores, a licença, os links e as configurações do escol"
+      },
+      "pt_pt": {
+        "name": "",
+        "summary": "Um Mod Menu como o do Fabric: os mods instalados com ícone, nome e descrição à esquerda, e a versão, os autores, a licença, as ligações e as definições do escol"
+      }
+    },
+    "created": "2026-11-20T08:08:35Z",
+    "updated": "2026-11-20T08:08:35Z"
+  }
+}
