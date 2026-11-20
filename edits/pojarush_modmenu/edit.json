@@ -1,0 +1,15 @@
+{
+  "summary": "A Mod Menu like Fabric's: the installed mods with icon, name and description on the left, and the picked one's version, authors, license, links and settings on",
+  "categories": [
+    "hud",
+    "utility",
+    "library"
+  ],
+  "source": "https://github.com/WandersTest3/Pojarush_Test3/tree/main/horizon/mods/pojarush-modmenu",
+  "gallery": [
+    {
+      "file": "gallery-1.jpg"
+    }
+  ],
+  "featured": null
+}
