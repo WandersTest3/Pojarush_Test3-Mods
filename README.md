@@ -18,11 +18,8 @@ Site de mods `.hmod` para o launcher Pojarush: https://wanderstest3.github.io/Po
    - Homepage URL: `https://wanderstest3.github.io/Pojarush_Test3-Mods/`
    - Authorization callback URL: `https://wanderstest3.github.io/Pojarush_Test3-Mods/callback.html`
    - Copie o **Client ID** e gere um **Client secret**.
-3. **Cloudflare Worker** (plano gratuito): dash.cloudflare.com > Workers & Pages > Create > Worker > Deploy > Edit code. Cole o conteúdo de `worker/worker.js` e clique em Deploy. Em Settings > Variables and Secrets, adicione:
-   - `CLIENT_ID`: o Client ID (texto)
-   - `CLIENT_SECRET`: o Client secret (tipo **Secret**)
-   - `ALLOWED_ORIGIN`: `https://wanderstest3.github.io`
-4. Em `site/config.json`, preencha `oauthClientId` com o Client ID e `authWorker` com o endereço do Worker (ex.: `https://pojarush-mods-auth.<conta>.workers.dev`).
+3. **Cloudflare Worker** (plano gratuito): dash.cloudflare.com > Workers & Pages > Create > Import a repository, escolha este repositório. O Worker se chama `pojarush-test3-mods` e é publicado a cada push, usando `wrangler.toml` (que já define `CLIENT_ID` e `ALLOWED_ORIGIN`). No Worker, em Settings > Runtime variables and secrets > Add variable, crie `CLIENT_SECRET` com o Client secret e marque **Secret**. Para conferir, abra `https://pojarush-test3-mods.wanderstest3.workers.dev/status`: deve mostrar `"secret_set":true`.
+4. Em `site/config.json`, `oauthClientId` é o Client ID e `authWorker` é o endereço do Worker.
 
 Sem os passos 2 a 4, o site funciona para ver e baixar mods, e a página de envio mostra que o envio ainda não foi ativado.
 
