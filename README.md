@@ -36,3 +36,12 @@ Com `"sha256"`, só aquele arquivo é retirado; sem ele, o mod inteiro.
 ## Limites
 
 Definidos em `site/config.json`: `.hmod` até 5 MiB, ícone até 2 MiB, banner até 8 MiB, até 3 categorias.
+
+
+## Páginas, edição e perfis
+
+- `mod.html?id=<id>`: descrição, galeria (até 3 imagens), changelog, versões e detalhes. A imagem marcada com a estrela na galeria vira o banner do card.
+- `user.html?u=<login>`: perfil do criador com todos os mods dele.
+- `edit.html?id=<id>`: só os donos do mod. Envia um pull request com `edits/<id>/edit.json` (e imagens/descrição); o bot valida o dono e atualiza o registro, sem criar release.
+- O envio pede a versão mínima do Pojarush_Test3 (`pojarushVersions` em `site/config.json`, hoje só `2.0.0`).
+- O link do Discord e os avisos do rodapé vêm de `site/config.json` (`discord`) e dos textos em `assets/js/core.js` e `assets/js/i18n.js`.

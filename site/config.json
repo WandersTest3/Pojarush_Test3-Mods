@@ -3,11 +3,16 @@
   "siteUrl": "https://wanderstest3.github.io/Pojarush_Test3-Mods/",
   "oauthClientId": "Ov23liZNRoILl1wor9EZ",
   "authWorker": "https://pojarush-test3-mods.wanderstest3.workers.dev",
+  "discord": "https://discord.gg/CdHqyDxMrz",
   "maxModMiB": 5,
   "maxIconMiB": 2,
-  "maxBannerMiB": 8,
+  "maxImageMiB": 8,
+  "maxGalleryImages": 3,
   "maxCategories": 3,
   "defaultGame": "26.3",
+  "pojarushVersions": [
+    "2.0.0"
+  ],
   "categories": [
     "adventure",
     "decoration",

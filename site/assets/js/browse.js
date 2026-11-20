@@ -1,4 +1,4 @@
-import { ICONS, auth, author, chrome, config, esc, fmtAgo, fmtNumber, iconUrl, loadIndex, local, localized, sideTag, t, typeTag, accountSheet } from "./core.js";
+import { ICONS, accountSheet, auth, chrome, config, esc, fmtNumber, loadIndex, local, modCard, prepareMod, t } from "./core.js";
 
 const SORTS = ["relevance", "downloads", "newest", "updated", "name"];
 const PER = [10, 20, 50, 100];
@@ -73,24 +73,6 @@ function filtered() {
     name: (a, b) => a.m.localName.localeCompare(b.m.localName, document.documentElement.lang)
   }[state.sort];
   return list.sort(by).map(x => x.m);
-}
-
-function card(m) {
-  const banner = m.banner ? `<img src="${esc(m.banner)}" alt="" loading="lazy">` : "";
-  const tags = [sideTag(m.side), ...m.cats.map(c => `<span class="tag">${esc(t(`cat_${c}`))}</span>`), typeTag(m.code)].join(" ");
-  return `<a class="card" href="mod.html?id=${encodeURIComponent(m.id)}">
-    <div class="card-banner">${banner}</div>
-    <div class="card-body">
-      <img class="mod-icon" src="${esc(m.icon)}" alt="" loading="lazy">
-      <h2 class="card-title">${esc(m.localName)}<span class="by">${esc(t("by"))} ${esc(m.author)}</span></h2>
-      <p class="card-summary">${esc(m.localSummary)}</p>
-      <div class="card-tags chips">${tags}</div>
-      <div class="card-stats">
-        <span class="stat">${ICONS.download}${esc(t("downloads", { n: fmtNumber(m.downloads) }))}</span>
-        <span class="stat">${ICONS.clock}${esc(t("updatedAgo", { t: fmtAgo(m.updated) }))}</span>
-      </div>
-    </div>
-  </a>`;
 }
 
 function pager(pages) {
@@ -214,7 +196,7 @@ function update() {
   if (state.owner === "me" && !auth.user) empty = `<div class="empty">${esc(t("mineNeedsLogin"))}<p><button class="btn primary" data-a="account">${esc(t("nav_account"))}</button></p></div>`;
   else if (!mods.length) empty = `<div class="empty">${esc(t("noMods"))}<p><a class="btn primary" href="upload.html">${esc(t("nav_upload"))}</a></p></div>`;
   else if (!list.length) empty = `<div class="empty">${esc(t("noResults"))}</div>`;
-  results.innerHTML = empty || slice.map(card).join("");
+  results.innerHTML = empty || slice.map(modCard).join("");
   results.querySelector('[data-a="account"]')?.addEventListener("click", accountSheet);
   const pg = pager(pages);
   app.querySelector("#pagerTop").innerHTML = pg;
@@ -222,36 +204,12 @@ function update() {
   syncUrl();
 }
 
-function prepare(p) {
-  const l = localized(p);
-  const updated = p.site?.updated || `${p.versions[0]?.published}T00:00:00Z`;
-  return {
-    id: p.id,
-    name: p.name,
-    summary: p.summary,
-    localName: l.name,
-    localSummary: l.summary,
-    authors: p.authors || [],
-    owners: p.owners || [],
-    author: author(p),
-    icon: iconUrl(p),
-    banner: p.site?.banner || null,
-    cats: p.site?.categories || [],
-    side: p.versions[0]?.side || "client",
-    code: Boolean(p.site?.code),
-    games: [...new Set(p.versions.map(v => v.game).filter(Boolean))],
-    downloads: p.downloads || 0,
-    created: p.site?.created || updated,
-    updated
-  };
-}
-
 (async () => {
   try {
     cfg = await config();
     const index = await loadIndex();
     const revokedAll = new Set((index.revoked || []).filter(r => !r.sha256).map(r => r.id));
-    mods = (index.projects || []).filter(p => p.kind === "mod" && p.versions?.length && !revokedAll.has(p.id)).map(prepare);
+    mods = (index.projects || []).filter(p => p.kind === "mod" && p.versions?.length && !revokedAll.has(p.id)).map(prepareMod);
   } catch {
     app.innerHTML = `<div class="notice box error">${esc(t("loadError"))}</div>`;
     return;

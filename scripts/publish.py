@@ -2,6 +2,7 @@ import hashlib
 import io
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -17,16 +18,19 @@ from common import (
 Image.MAX_IMAGE_PIXELS = 40_000_000
 
 MIB = 1 << 20
-IMAGE_EXT = ("png", "jpg", "jpeg", "webp")
-ALLOWED = {"mod.hmod", "submission.json", "description.md"} | {
-    f"{kind}.{ext}" for kind in ("icon", "banner") for ext in IMAGE_EXT
+IMAGE_RE = r"(png|jpe?g|webp)"
+FILE_RE = re.compile(rf"^(icon|description-image|gallery-[1-3])\.{IMAGE_RE}$")
+TEXT_FILES = {
+    "submissions": {"mod.hmod", "submission.json", "description.md"},
+    "edits": {"edit.json", "description.md"},
 }
+META_FILE = {"submissions": "submission.json", "edits": "edit.json"}
 LIMITS = {
     "mod.hmod": CONFIG["maxModMiB"] * MIB,
     "submission.json": 64 * 1024,
+    "edit.json": 64 * 1024,
     "description.md": 64 * 1024,
     "icon": CONFIG["maxIconMiB"] * MIB,
-    "banner": CONFIG["maxBannerMiB"] * MIB,
 }
 
 REPO = os.environ["REPO"]
@@ -76,35 +80,45 @@ def blob(path, limit):
 
 def collect():
     files = pr_files()
-    inside = [(f, s) for f, s in files if f.startswith("submissions/")]
-    outside = [f for f, _ in files if not f.startswith("submissions/")]
+    roots = ("submissions/", "edits/")
+    inside = [(f, st) for f, st in files if f.startswith(roots)]
+    outside = [f for f, _ in files if not f.startswith(roots)]
     if not inside:
         return None
     if outside:
         if is_maintainer():
             return None
-        raise Reject("Only files in `submissions/<id>/` can be sent.")
+        raise Reject("Only files in `submissions/<id>/` or `edits/<id>/` can be sent.")
+    kinds = {f.split("/")[0] for f, _ in inside}
+    if len(kinds) != 1:
+        raise Reject("Send either a submission or an edit, not both.")
+    root = kinds.pop()
     folders = {f.split("/")[1] for f, _ in inside if f.count("/") == 2}
     if len(folders) != 1 or any(f.count("/") != 2 for f, _ in inside):
-        raise Reject("One submission folder per pull request: `submissions/<id>/<file>`.")
+        raise Reject(f"One folder per pull request: `{root}/<id>/<file>`.")
     folder = folders.pop()
     picked = {}
     for path, status in inside:
         name = path.split("/")[2]
         if status not in ("added", "modified"):
             raise Reject(f"`{path}`: {status}")
-        if name not in ALLOWED:
+        match = FILE_RE.match(name)
+        if match:
+            key = name.rsplit(".", 1)[0]
+        elif name in TEXT_FILES[root]:
+            key = name
+        else:
             raise Reject(f"`{name}` is not an accepted file.")
-        kind = name.split(".")[0]
-        if kind in picked and kind in ("icon", "banner"):
-            raise Reject(f"More than one {kind}.")
-        picked[kind if kind in ("icon", "banner") else name] = (path, name)
-    if "mod.hmod" not in picked:
+        if key in picked:
+            raise Reject(f"More than one `{key}`.")
+        picked[key] = (path, name)
+    if root == "submissions" and "mod.hmod" not in picked:
         raise Reject("`mod.hmod` is missing.")
     data = {}
     for key, (path, name) in picked.items():
-        data[key] = (name, blob(path, LIMITS.get(key, LIMITS.get(name))))
-    return folder, data
+        limit = LIMITS.get(key) or (LIMITS["icon"] if key == "icon" else CONFIG["maxImageMiB"] * MIB)
+        data[key] = (name, blob(path, limit))
+    return root, folder, data
 
 
 def inspect(hmod_path, icon_path):
@@ -143,27 +157,204 @@ def save_icon(data, out):
     img.save(out, "PNG", optimize=True)
 
 
-def save_banner(data, out):
-    img = open_image(data, "banner")
+def webp_bytes(img, width):
     img = img.convert("RGBA" if img.mode in ("RGBA", "LA", "P") else "RGB")
-    if img.width < 320 or img.height < 80:
-        raise Reject("The banner must be at least 320x80.")
-    if img.width > 1280:
-        img = img.resize((1280, max(1, round(img.height * 1280 / img.width))), Image.LANCZOS)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    img.save(out, "WEBP", quality=82, method=6)
+    if img.width > width:
+        img = img.resize((width, max(1, round(img.height * width / img.width))), Image.LANCZOS)
+    buf = io.BytesIO()
+    img.save(buf, "WEBP", quality=82, method=6)
+    return buf.getvalue()
 
 
-def submission_meta(data):
-    if "submission.json" not in data:
+def digest(data):
+    return hashlib.sha256(data).hexdigest()[:10]
+
+
+def read_meta(data, root):
+    key = META_FILE[root]
+    if key not in data:
         return {}
     try:
-        meta = json.loads(data["submission.json"][1].decode("utf-8"))
+        meta = json.loads(data[key][1].decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError):
-        raise Reject("`submission.json` is not valid JSON.")
+        raise Reject(f"`{key}` is not valid JSON.")
     if not isinstance(meta, dict):
-        raise Reject("`submission.json` must be an object.")
+        raise Reject(f"`{key}` must be an object.")
     return meta
+
+
+def sync_files(folder, pattern, keep):
+    if not folder.exists():
+        return
+    for f in folder.glob(pattern):
+        if f.name not in keep:
+            f.unlink()
+
+
+def apply_media(mod_id, site_old, data, meta):
+    assets = SITE / "mods" / mod_id
+    old_gallery = list(site_old.get("gallery") or [])
+    by_name = {Path(p).name: p for p in old_gallery}
+    new_files = {}
+
+    if "gallery" in meta:
+        spec = meta["gallery"]
+        if not isinstance(spec, list) or len(spec) > CONFIG["maxGalleryImages"]:
+            raise Reject(f"The gallery accepts up to {CONFIG['maxGalleryImages']} images.")
+        gallery = []
+        for entry in spec:
+            if not isinstance(entry, dict):
+                raise Reject("Invalid gallery entry.")
+            if "keep" in entry:
+                path = by_name.get(entry["keep"])
+                if not path:
+                    raise Reject("A gallery image to keep does not exist anymore.")
+            elif "file" in entry:
+                stem = str(entry["file"]).rsplit(".", 1)[0]
+                if not stem.startswith("gallery-") or stem not in data:
+                    raise Reject("A gallery image is missing from the pull request.")
+                img = open_image(data[stem][1], "gallery image")
+                if min(img.size) < 200:
+                    raise Reject("Gallery images must be at least 200 px on each side.")
+                raw = webp_bytes(img, 1600)
+                name = f"g-{digest(raw)}.webp"
+                new_files[name] = raw
+                path = f"mods/{mod_id}/{name}"
+            else:
+                raise Reject("Invalid gallery entry.")
+            if path not in gallery:
+                gallery.append(path)
+    else:
+        gallery = old_gallery
+
+    if "featured" in meta:
+        index = meta["featured"]
+        if index is None:
+            featured = None
+        elif isinstance(index, int) and not isinstance(index, bool) and 0 <= index < len(gallery):
+            featured = gallery[index]
+        else:
+            raise Reject("Invalid featured gallery image.")
+    else:
+        featured = site_old.get("featured")
+        if featured not in gallery:
+            featured = None
+
+    banner_name = None
+    banner_raw = None
+    if featured:
+        name = Path(featured).name
+        old_banner = site_old.get("banner")
+        if featured == site_old.get("featured") and old_banner and re.search(r"/banner-[0-9a-f]{10}\.webp$", old_banner):
+            banner_name = Path(old_banner).name
+        else:
+            source = new_files.get(name)
+            if source is None:
+                source = (SITE / featured).read_bytes()
+            banner_raw = webp_bytes(open_image(source, "gallery image"), 960)
+            banner_name = f"banner-{digest(banner_raw)}.webp"
+
+    desc_rel = site_old.get("description_image")
+    desc_raw = None
+    if "description_image" in meta:
+        spec = meta["description_image"]
+        if spec is None:
+            desc_rel = None
+        elif isinstance(spec, dict) and spec.get("keep"):
+            pass
+        elif isinstance(spec, dict) and spec.get("file"):
+            stem = str(spec["file"]).rsplit(".", 1)[0]
+            if stem != "description-image" or stem not in data:
+                raise Reject("The description image is missing from the pull request.")
+            img = open_image(data[stem][1], "description image")
+            if min(img.size) < 100:
+                raise Reject("The description image must be at least 100 px on each side.")
+            desc_raw = webp_bytes(img, 1280)
+            desc_rel = f"mods/{mod_id}/d-{digest(desc_raw)}.webp"
+        else:
+            raise Reject("Invalid description image.")
+
+    if gallery or featured or desc_rel or new_files or "gallery" in meta or desc_raw:
+        assets.mkdir(parents=True, exist_ok=True)
+    for name, raw in new_files.items():
+        (assets / name).write_bytes(raw)
+    if banner_raw:
+        (assets / banner_name).write_bytes(banner_raw)
+    if desc_raw:
+        (SITE / desc_rel).write_bytes(desc_raw)
+    sync_files(assets, "g-*.webp", {Path(p).name for p in gallery})
+    sync_files(assets, "banner*.webp", {banner_name} if banner_name else set())
+    sync_files(assets, "d-*.webp", {Path(desc_rel).name} if desc_rel else set())
+    return {
+        "gallery": gallery,
+        "featured": featured,
+        "banner": f"mods/{mod_id}/{banner_name}" if banner_name else None,
+        "description_image": desc_rel,
+    }
+
+
+def read_description(data):
+    if "description.md" not in data:
+        return None
+    try:
+        return clean(data["description.md"][1].decode("utf-8"), 20000)
+    except UnicodeDecodeError:
+        raise Reject("`description.md` must be UTF-8 text.")
+
+
+def pick_categories(meta, old):
+    categories = meta.get("categories")
+    if isinstance(categories, list):
+        return [c for c in dict.fromkeys(categories) if c in CONFIG["categories"]][: CONFIG["maxCategories"]]
+    return old
+
+
+def validate_index(tmp):
+    check = tmp / "index.json"
+    write_json(check, {"schema": 1, "generated": "", "projects": load_projects(), "revoked": []})
+    proc = subprocess.run([INSPECT, "index", str(check)], capture_output=True, text=True)
+    if not json.loads(proc.stdout or "{}").get("ok"):
+        raise Reject(f"Index check failed: {proc.stdout.strip()}")
+
+
+def edit(mod_id, data, meta):
+    if not ID_RE.match(mod_id):
+        raise Reject(f"Invalid id `{mod_id}`.")
+    reg_path = REGISTRY / f"{mod_id}.json"
+    if not reg_path.exists():
+        raise Reject(f"`{mod_id}` does not exist.")
+    existing = json.loads(reg_path.read_text(encoding="utf-8"))
+    if AUTHOR.lower() not in [o.lower() for o in existing["owners"]]:
+        raise Reject(f"`{mod_id}` belongs to {', '.join('@' + o for o in existing['owners'])}.")
+    now = datetime.now(timezone.utc).replace(microsecond=0)
+    site = dict(existing.get("site", {}))
+    if "summary" in meta:
+        summary = clean(meta["summary"], 160, True)
+        if not summary:
+            raise Reject("A short description (summary) is required.")
+        existing["summary"] = summary
+    if "source" in meta:
+        existing["source"] = meta["source"] if https(meta["source"]) else f"{SITE_URL}mod.html?id={mod_id}"
+    description = read_description(data)
+    if description is not None:
+        existing["description"] = description
+    site["categories"] = pick_categories(meta, site.get("categories", []))
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        assets = SITE / "mods" / mod_id
+        if "icon" in data:
+            save_icon(data["icon"][1], assets / "icon.png")
+            site["icon_file"] = f"mods/{mod_id}/icon.png"
+            existing["icon"] = SITE_URL + site["icon_file"]
+        site.update(apply_media(mod_id, site, data, meta))
+        site["edited"] = now.isoformat().replace("+00:00", "Z")
+        existing["site"] = site
+        write_json(reg_path, existing)
+        validate_index(tmp)
+    output("result", "published")
+    output("mod_id", mod_id)
+    output("message", f"{existing['name']} (edit)")
+    output("page", f"{SITE_URL}mod.html?id={mod_id}")
 
 
 def main():
@@ -171,8 +362,11 @@ def main():
     if collected is None:
         output("result", "skip")
         return
-    folder, data = collected
-    meta = submission_meta(data)
+    root, folder, data = collected
+    meta = read_meta(data, root)
+    if root == "edits":
+        edit(folder, data, meta)
+        return
     now = datetime.now(timezone.utc).replace(microsecond=0)
 
     with tempfile.TemporaryDirectory() as tmp:
@@ -190,6 +384,10 @@ def main():
             raise Reject(f"The folder `submissions/{folder}` must be named after the mod id `{mod_id}`.")
         if not VERSION_RE.match(version):
             raise Reject(f"Version `{version}`: use only letters, digits, `.`, `-`, `_` and `+`.")
+
+        pojarush = clean(meta.get("pojarush"), 20, True)
+        if pojarush not in CONFIG["pojarushVersions"]:
+            raise Reject("Choose the Pojarush_Test3 version this mod works from.")
 
         reg_path = REGISTRY / f"{mod_id}.json"
         existing = json.loads(reg_path.read_text(encoding="utf-8")) if reg_path.exists() else None
@@ -220,20 +418,10 @@ def main():
         source = next((u for u in (meta.get("source"), contact["sources"], contact["homepage"]) if https(u)), None)
         if not source:
             source = existing["source"] if existing else f"{SITE_URL}mod.html?id={mod_id}"
-        categories = meta.get("categories")
-        if isinstance(categories, list):
-            categories = [c for c in dict.fromkeys(categories) if c in CONFIG["categories"]][: CONFIG["maxCategories"]]
-        else:
-            categories = site_old.get("categories", [])
-        if "description.md" in data:
-            try:
-                description = clean(data["description.md"][1].decode("utf-8"), 20000)
-            except UnicodeDecodeError:
-                raise Reject("`description.md` must be UTF-8 text.")
-        elif existing:
-            description = existing.get("description", "")
-        else:
-            description = clean(m["description"], 20000)
+        categories = pick_categories(meta, site_old.get("categories", []))
+        description = read_description(data)
+        if description is None:
+            description = existing.get("description", "") if existing else clean(m["description"], 20000)
         changelog = clean(meta.get("changelog"), 6000)
 
         assets = SITE / "mods" / mod_id
@@ -247,10 +435,7 @@ def main():
                 icon_rel = f"mods/{mod_id}/icon.png"
             except Reject:
                 pass
-        banner_rel = site_old.get("banner")
-        if "banner" in data:
-            save_banner(data["banner"][1], assets / "banner.webp")
-            banner_rel = f"mods/{mod_id}/banner.webp"
+        media = apply_media(mod_id, site_old, data, meta)
 
         file_name = f"{tag}.hmod"
         asset = tmp / file_name
@@ -285,7 +470,8 @@ def main():
             "site": {
                 "categories": categories,
                 "icon_file": icon_rel,
-                "banner": banner_rel,
+                **media,
+                "min_pojarush": {**site_old.get("min_pojarush", {}), version: pojarush},
                 "code": bool(m["code"]),
                 "contact": {k: v for k, v in contact.items() if https(v)},
                 "translations": {
@@ -299,11 +485,7 @@ def main():
         }
         write_json(reg_path, project)
 
-        check = tmp / "index.json"
-        write_json(check, {"schema": 1, "generated": "", "projects": load_projects(), "revoked": []})
-        proc = subprocess.run([INSPECT, "index", str(check)], capture_output=True, text=True)
-        if not json.loads(proc.stdout or "{}").get("ok"):
-            raise Reject(f"Index check failed: {proc.stdout.strip()}")
+        validate_index(tmp)
 
         notes = changelog or f"{name} {version}"
         run(["gh", "release", "create", tag, str(asset), "-R", REPO, "--target", "main",

@@ -1,3 +1,5 @@
+import { EXTRA, EXTRA_LANGS } from "./i18n.js";
+
 const STRINGS = {
   en: {
     search: "Search mods...",
@@ -142,7 +144,49 @@ const STRINGS = {
     up_content: "content only",
     sizeMiB: "{n} MiB",
     sizeKiB: "{n} KiB",
-    footer: "Mods for the Pojarush launcher. Files are hosted on GitHub."
+    footer: "Mods for the Pojarush launcher. Files are hosted on GitHub.",
+    creator: "Creator",
+    tab_gallery: "Gallery",
+    tab_changelog: "Changelog",
+    noGallery: "No images yet.",
+    noChangelog: "No changelog for this version.",
+    menu: "More options",
+    copyLink: "Copy link",
+    linkCopied: "Link copied",
+    reportProblem: "Report a problem",
+    editPage: "Edit page",
+    viewSource: "Source code",
+    requires: "Requires",
+    requiresPojarush: "Pojarush_Test3 {v} or newer",
+    projectsCount: "{n} projects",
+    projectCount: "1 project",
+    onGithubSince: "On GitHub since {d}",
+    editOnGithub: "Edit on GitHub",
+    viewOnGithub: "View on GitHub",
+    noModsUser: "This user has not published any mods yet.",
+    userNotFound: "This user was not found.",
+    footer_mojang: "Pojarush Mods is an independent site. It is not affiliated with, endorsed by or associated with Mojang Studios or Microsoft. Minecraft is a trademark of Mojang Studios.",
+    footer_rights: "All rights reserved. Each mod belongs to its authors and follows the license they chose.",
+    footer_report: "Found a bug on the site, or a mod that should not be here? Report it on our Discord server.",
+    footer_discord: "Join the Discord server",
+    up_gallery: "Gallery",
+    up_galleryHint: "Optional, up to {n} images. Tap the star on one to use it as the banner on the mod card.",
+    up_addImage: "Add image",
+    up_star: "Use as banner",
+    up_removeImage: "Remove image",
+    up_descImage: "Description image",
+    up_descImageHint: "Optional. Shown at the top of the description.",
+    up_tooSmall: "{file} is too small. Use at least 200×200 px.",
+    up_pojarush: "Works from Pojarush_Test3 version",
+    up_pojarushHint: "The first launcher version this mod runs on.",
+    up_pojarushOpt: "V{v}",
+    edit_title: "Edit {name}",
+    edit_save: "Save changes",
+    edit_notOwner: "Only the owners of this mod can edit it.",
+    edit_login: "Sign in to edit this mod.",
+    edit_done: "Saved. The page updates in a few minutes.",
+    edit_step_check: "Checking and saving (1 to 5 minutes)",
+    edit_back: "Back to the mod page"
   },
   pt_br: {
     search: "Pesquisar mods...",
@@ -287,7 +331,49 @@ const STRINGS = {
     up_content: "só conteúdo",
     sizeMiB: "{n} MiB",
     sizeKiB: "{n} KiB",
-    footer: "Mods para o launcher Pojarush. Os arquivos ficam hospedados no GitHub."
+    footer: "Mods para o launcher Pojarush. Os arquivos ficam hospedados no GitHub.",
+    creator: "Criador",
+    tab_gallery: "Galeria",
+    tab_changelog: "Changelog",
+    noGallery: "Ainda não há imagens.",
+    noChangelog: "Sem changelog para esta versão.",
+    menu: "Mais opções",
+    copyLink: "Copiar link",
+    linkCopied: "Link copiado",
+    reportProblem: "Reportar um problema",
+    editPage: "Editar página",
+    viewSource: "Código-fonte",
+    requires: "Requer",
+    requiresPojarush: "Pojarush_Test3 {v} ou mais novo",
+    projectsCount: "{n} projetos",
+    projectCount: "1 projeto",
+    onGithubSince: "No GitHub desde {d}",
+    editOnGithub: "Editar no GitHub",
+    viewOnGithub: "Ver no GitHub",
+    noModsUser: "Este usuário ainda não publicou nenhum mod.",
+    userNotFound: "Este usuário não foi encontrado.",
+    footer_mojang: "O Pojarush Mods é um site independente. Não é afiliado, aprovado nem associado à Mojang Studios ou à Microsoft. Minecraft é uma marca registrada da Mojang Studios.",
+    footer_rights: "Todos os direitos reservados. Cada mod pertence aos seus autores e segue a licença escolhida por eles.",
+    footer_report: "Encontrou um bug no site ou um mod que não deveria estar aqui? Reporte no nosso servidor do Discord.",
+    footer_discord: "Entrar no servidor do Discord",
+    up_gallery: "Galeria",
+    up_galleryHint: "Opcional, até {n} imagens. Toque na estrela de uma delas para usá-la como banner no card do mod.",
+    up_addImage: "Adicionar imagem",
+    up_star: "Usar como banner",
+    up_removeImage: "Remover imagem",
+    up_descImage: "Imagem da descrição",
+    up_descImageHint: "Opcional. Aparece no topo da descrição.",
+    up_tooSmall: "{file} é pequena demais. Use pelo menos 200×200 px.",
+    up_pojarush: "Funciona a partir da versão do Pojarush_Test3",
+    up_pojarushHint: "A primeira versão do launcher em que este mod funciona.",
+    up_pojarushOpt: "V{v}",
+    edit_title: "Editar {name}",
+    edit_save: "Salvar alterações",
+    edit_notOwner: "Só os donos deste mod podem editá-lo.",
+    edit_login: "Entre para editar este mod.",
+    edit_done: "Salvo. A página atualiza em alguns minutos.",
+    edit_step_check: "Verificando e salvando (1 a 5 minutos)",
+    edit_back: "Voltar para a página do mod"
   }
 };
 
@@ -332,10 +418,22 @@ STRINGS.pt_pt = Object.assign({}, STRINGS.pt_br, {
   up_step_pr: "A abrir o pull request",
   up_step_check: "A verificar e publicar (1 a 5 minutos)",
   up_timeout: "Ainda a verificar. Acompanhe pelo pull request.",
-  footer: "Mods para o launcher Pojarush. Os ficheiros estão alojados no GitHub."
+  footer: "Mods para o launcher Pojarush. Os ficheiros estão alojados no GitHub.",
+  noModsUser: "Este utilizador ainda não publicou nenhum mod.",
+  userNotFound: "Este utilizador não foi encontrado.",
+  footer_report: "Encontrou um erro no site ou um mod que não devia estar aqui? Reporte no nosso servidor do Discord.",
+  up_galleryHint: "Opcional, até {n} imagens. Toque na estrela de uma delas para a usar como banner no cartão do mod.",
+  up_addImage: "Adicionar imagem",
+  up_pojarush: "Funciona a partir da versão do Pojarush_Test3",
+  up_tooSmall: "{file} é demasiado pequena. Use pelo menos 200×200 px.",
+  edit_login: "Inicie sessão para editar este mod.",
+  edit_notOwner: "Só os proprietários deste mod o podem editar."
 });
 
-const LANGS = { en: "English", pt_br: "Português (Brasil)", pt_pt: "Português (Portugal)" };
+Object.assign(STRINGS, EXTRA);
+
+const LANGS = { en: "English", pt_br: "Português (Brasil)", pt_pt: "Português (Portugal)", ...Object.fromEntries(Object.entries(EXTRA_LANGS).map(([k, v]) => [k, v.name])) };
+const HTML_LANG = { en: "en", pt_br: "pt-BR", pt_pt: "pt-PT", ...Object.fromEntries(Object.entries(EXTRA_LANGS).map(([k, v]) => [k, v.tag])) };
 
 function store(kind) {
   try {
@@ -355,13 +453,19 @@ export const session = store("sessionStorage");
 function detectLang() {
   const saved = local.getItem("pm_lang");
   if (saved && STRINGS[saved]) return saved;
-  const nav = (navigator.language || "en").toLowerCase();
-  if (nav === "pt-pt") return "pt_pt";
-  if (nav.startsWith("pt")) return "pt_br";
+  for (const raw of navigator.languages?.length ? navigator.languages : [navigator.language || "en"]) {
+    const nav = raw.toLowerCase();
+    if (nav === "pt-pt") return "pt_pt";
+    if (nav.startsWith("pt")) return "pt_br";
+    if (nav.startsWith("zh")) return "zh_cn";
+    const base = nav.split("-")[0];
+    if (base === "en") return "en";
+    if (STRINGS[base]) return base;
+  }
   return "en";
 }
 export const lang = detectLang();
-document.documentElement.lang = { en: "en", pt_br: "pt-BR", pt_pt: "pt-PT" }[lang];
+document.documentElement.lang = HTML_LANG[lang] || "en";
 
 export function t(key, vars = {}) {
   const s = STRINGS[lang][key] ?? STRINGS.en[key] ?? key;
@@ -417,6 +521,15 @@ export const ICONS = {
   folder: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z"/></svg>',
   user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.2-4 4.2-6 8-6s6.8 2 8 6"/></svg>',
   upload: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V5m0 0L7.5 9.5M12 5l4.5 4.5M5 20h14"/></svg>',
+  star: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9l-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></svg>',
+  starOutline: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9l-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></svg>',
+  close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  dots: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg>',
+  link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3A4 4 0 0 0 11 18.7l1-1"/></svg>',
+  flag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4m0 0h11l-2 4 2 4H5"/></svg>',
+  external: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>',
+  image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10" r="1.7"/><path d="m4 18 5-5 4 4 3-3 4 4"/></svg>',
   mark: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg>'
 };
 
@@ -447,6 +560,67 @@ export function author(p) {
 
 export function iconUrl(p) {
   return p.site?.icon_file || "assets/img/icon-default.svg";
+}
+
+export function creator(p) {
+  return p.owners?.[0] || p.authors?.[0] || "";
+}
+
+export function avatarUrl(login, size = 96) {
+  return `https://github.com/${encodeURIComponent(login)}.png?size=${size}`;
+}
+
+export function profileHref(login) {
+  return `user.html?u=${encodeURIComponent(login)}`;
+}
+
+export function fmtMonth(iso) {
+  return new Intl.DateTimeFormat(document.documentElement.lang, { month: "short", year: "numeric" }).format(new Date(iso));
+}
+
+export function prepareMod(p) {
+  const l = localized(p);
+  const updated = p.site?.updated || `${p.versions[0]?.published}T00:00:00Z`;
+  return {
+    id: p.id,
+    name: p.name,
+    summary: p.summary,
+    localName: l.name,
+    localSummary: l.summary,
+    authors: p.authors || [],
+    owners: p.owners || [],
+    creator: creator(p),
+    icon: iconUrl(p),
+    banner: p.site?.banner || null,
+    cats: p.site?.categories || [],
+    side: p.versions[0]?.side || "client",
+    code: Boolean(p.site?.code),
+    games: [...new Set(p.versions.map(v => v.game).filter(Boolean))],
+    downloads: p.downloads || 0,
+    created: p.site?.created || updated,
+    updated
+  };
+}
+
+export function modCard(m) {
+  const banner = m.banner ? `<img src="${esc(m.banner)}" alt="" loading="lazy">` : "";
+  const tags = [sideTag(m.side), ...m.cats.map(c => `<span class="tag">${esc(t(`cat_${c}`))}</span>`), typeTag(m.code)].join(" ");
+  const who = m.creator
+    ? `<span class="by"><span class="who"><img class="mini-avatar" src="${esc(avatarUrl(m.creator, 48))}" alt="" loading="lazy">${esc(m.creator)}</span></span>`
+    : "";
+  return `<a class="card" href="mod.html?id=${encodeURIComponent(m.id)}">
+    <div class="card-banner">${banner}</div>
+    <div class="card-body">
+      <img class="mod-icon" src="${esc(m.icon)}" alt="" loading="lazy">
+      <h2 class="card-title">${esc(m.localName)}${who}</h2>
+      <p class="card-summary">${esc(m.localSummary)}</p>
+      <div class="card-tags chips">${tags}</div>
+      <div class="card-stats">
+        <span class="stat">${ICONS.download}${esc(t("downloads", { n: fmtNumber(m.downloads) }))}</span>
+        <span class="stat">${ICONS.clock}${esc(t("updatedAgo", { t: fmtAgo(m.updated) }))}</span>
+      </div>
+    </div>
+  </a>`;
 }
 
 export const auth = {
@@ -504,7 +678,7 @@ export async function gh(path, opts = {}) {
   return data;
 }
 
-function sheet(html) {
+export function sheet(html) {
   const back = document.createElement("div");
   back.className = "sheet-back";
   back.innerHTML = `<div class="sheet" role="dialog" aria-modal="true">${html}</div>`;
@@ -563,8 +737,16 @@ export function chrome(active) {
 
   const foot = document.createElement("footer");
   foot.className = "footer";
-  foot.textContent = t("footer");
+  foot.innerHTML = `<p>${esc(t("footer"))}</p>
+    <p>${esc(t("footer_mojang"))}</p>
+    <p>${esc(t("footer_rights"))}</p>
+    <p>${esc(t("footer_report"))} <a data-a="discord" href="#" rel="noopener" target="_blank">${esc(t("footer_discord"))}</a></p>`;
   document.querySelector("main").after(foot);
+  config().then(c => {
+    const a = foot.querySelector('[data-a="discord"]');
+    if (safeUrl(c.discord)) a.href = c.discord;
+    else a.hidden = true;
+  }).catch(() => {});
   return nav;
 }
 

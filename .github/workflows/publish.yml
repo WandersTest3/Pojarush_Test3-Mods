@@ -29,7 +29,7 @@ jobs:
       - name: Check for a submission
         id: check
         run: |
-          n=$(gh api "repos/$REPO/pulls/$PR_NUMBER/files" --paginate --jq '[.[] | select(.filename | startswith("submissions/"))] | length' | awk '{s+=$1} END {print s+0}')
+          n=$(gh api "repos/$REPO/pulls/$PR_NUMBER/files" --paginate --jq '[.[] | select(.filename | startswith("submissions/") or startswith("edits/"))] | length' | awk '{s+=$1} END {print s+0}')
           echo "found=$([ "$n" -gt 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
 
       - uses: actions/checkout@v4
@@ -75,13 +75,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add registry site/mods
+          git add -A registry site/mods
+          if git diff --cached --quiet; then exit 0; fi
           git commit -m "Publish $MESSAGE"
           for i in 1 2 3 4 5; do
             if git pull --rebase origin main && git push origin HEAD:main; then exit 0; fi
             sleep 5
           done
-          gh release delete "$TAG" -R "$REPO" --cleanup-tag -y
+          if [ -n "$TAG" ]; then gh release delete "$TAG" -R "$REPO" --cleanup-tag -y; fi
           exit 1
 
       - name: Reply
