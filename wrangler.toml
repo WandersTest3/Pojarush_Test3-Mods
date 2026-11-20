@@ -1,6 +1,7 @@
 name = "pojarush-test3-mods"
 main = "worker/worker.js"
 compatibility_date = "2026-11-01"
+workers_dev = true
 
 [vars]
 CLIENT_ID = "Ov23liZNRoILl1wor9EZ"
