@@ -45,3 +45,5 @@ Definidos em `site/config.json`: `.hmod` até 5 MiB, ícone até 2 MiB, banner a
 - `edit.html?id=<id>`: só os donos do mod. Envia um pull request com `edits/<id>/edit.json` (e imagens/descrição); o bot valida o dono e atualiza o registro, sem criar release.
 - O envio pede a versão mínima do Pojarush_Test3 (`pojarushVersions` em `site/config.json`, hoje só `2.0.0`).
 - O link do Discord e os avisos do rodapé vêm de `site/config.json` (`discord`) e dos textos em `assets/js/core.js` e `assets/js/i18n.js`.
+- Excluir: na página de edição, os donos podem excluir uma versão (`delete_versions`) ou a página inteira (`delete_mod`). O bot remove o registro e as imagens e, depois do commit, apaga as releases correspondentes.
+- A barra inferior tem 3 botões: início, enviar mod e perfil (o perfil abre `user.html?u=<login>`, onde fica o botão de sair).

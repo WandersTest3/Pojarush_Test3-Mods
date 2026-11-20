@@ -1,4 +1,4 @@
-import { ICONS, auth, chrome, config, esc, iconUrl, loadIndex, t } from "./core.js";
+import { ICONS, auth, chrome, config, esc, iconUrl, loadIndex, sheet, t } from "./core.js";
 import { bindFields, fieldsHtml, newState, paintCats, paintDesc, paintGallery, payload, sendPR, setIcon, showError, stepsView, validateFields } from "./form.js";
 
 chrome("");
@@ -37,7 +37,18 @@ function notice(html, error = false) {
     <form class="form" id="form" novalidate>
       <div class="notice box error" id="formError" role="alert" hidden></div>
       ${fieldsHtml(cfg, "edit")}
-    </form>`;
+    </form>
+    <section class="panel danger" id="danger">
+      <h2>${esc(t("edit_danger"))}</h2>
+      <div class="versions">${p.versions.map(v => `
+        <div class="version">
+          <div><div class="v">${esc(v.version)}</div></div>
+          ${p.versions.length > 1 ? `<button type="button" class="btn bad" data-v="${esc(v.version)}">${esc(t("edit_deleteVersion"))}</button>` : ""}
+        </div>`).join("")}
+      </div>
+      ${p.versions.length === 1 ? `<p class="muted">${esc(t("edit_lastVersion"))}</p>` : ""}
+      <button type="button" class="btn bad" id="deleteMod">${ICONS.close}${esc(t("edit_deleteMod"))}</button>
+    </section>`;
   bindFields(app, cfg, s, "edit");
 
   const site = p.site || {};
@@ -76,5 +87,41 @@ function notice(html, error = false) {
         <a class="btn primary" href="mod.html?id=${encodeURIComponent(id)}">${esc(t("up_openPage"))}</a>${prLink}</div></div>`
     });
     s.busy = false;
+  });
+
+  const remove = async meta => {
+    if (s.busy) return;
+    s.busy = true;
+    const all = [["edit.json", new TextEncoder().encode(JSON.stringify(meta, null, 2) + "\n").buffer]];
+    const mark = stepsView(app, t("edit_title", { name: p.name }), "edit_step_delete");
+    await sendPR(app, cfg, {
+      root: "edits",
+      id,
+      title: `Delete ${meta.delete_mod ? p.name : `${p.name} ${meta.delete_versions[0]}`}`,
+      message: `Delete ${id}${meta.delete_mod ? "" : ` ${meta.delete_versions[0]}`}`,
+      files: all,
+      mark,
+      again: `<a class="btn primary" href="mod.html?id=${encodeURIComponent(id)}">${esc(t("edit_back"))}</a>`,
+      onDone: prLink => `<div class="notice box"><p>${esc(t("edit_deleted"))}</p><div class="mod-actions">
+        <a class="btn primary" href="./">${esc(t("backToList"))}</a>${prLink}</div></div>`
+    });
+    s.busy = false;
+  };
+
+  const confirm = (message, needText, run) => {
+    const sh = sheet(`<h2>${esc(t("edit_danger"))}</h2><p>${esc(message)}</p>
+      ${needText ? `<input class="input" id="confirmText" autocomplete="off" autocapitalize="off" spellcheck="false">` : ""}
+      <button class="btn bad" data-a="go"${needText ? " disabled" : ""}>${esc(t("edit_confirmDo"))}</button>
+      <button class="btn" data-a="cancel">${esc(t("edit_cancel"))}</button>`);
+    const go = sh.el.querySelector('[data-a="go"]');
+    sh.el.querySelector('[data-a="cancel"]').onclick = sh.close;
+    sh.el.querySelector("#confirmText")?.addEventListener("input", e => { go.disabled = e.target.value.trim() !== needText; });
+    go.onclick = () => { sh.close(); run(); };
+  };
+
+  app.querySelector("#danger").addEventListener("click", e => {
+    const v = e.target.closest("[data-v]")?.dataset.v;
+    if (v) return confirm(t("edit_confirmVersion", { v }), "", () => remove({ delete_versions: [v] }));
+    if (e.target.closest("#deleteMod")) confirm(t("edit_confirmMod", { name: p.name, id }), id, () => remove({ delete_mod: true }));
   });
 })();

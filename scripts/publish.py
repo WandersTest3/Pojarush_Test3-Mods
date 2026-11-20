@@ -3,6 +3,7 @@ import io
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -327,7 +328,36 @@ def edit(mod_id, data, meta):
     if AUTHOR.lower() not in [o.lower() for o in existing["owners"]]:
         raise Reject(f"`{mod_id}` belongs to {', '.join('@' + o for o in existing['owners'])}.")
     now = datetime.now(timezone.utc).replace(microsecond=0)
+
+    def tag_of(v):
+        return v["file"]["url"].rsplit("/", 2)[-2]
+
+    if meta.get("delete_mod") is True:
+        reg_path.unlink()
+        shutil.rmtree(SITE / "mods" / mod_id, ignore_errors=True)
+        with tempfile.TemporaryDirectory() as tmp:
+            validate_index(Path(tmp))
+        output("result", "published")
+        output("mod_id", mod_id)
+        output("message", f"{existing['name']} (deleted)")
+        output("page", SITE_URL)
+        output("delete_tags", " ".join(tag_of(v) for v in existing["versions"]))
+        return
+
     site = dict(existing.get("site", {}))
+    delete_tags = []
+    if "delete_versions" in meta:
+        wanted = meta["delete_versions"]
+        if not isinstance(wanted, list) or not all(isinstance(x, str) for x in wanted):
+            raise Reject("Invalid list of versions to delete.")
+        known = {v["version"] for v in existing["versions"]}
+        if not set(wanted) <= known:
+            raise Reject("A version to delete does not exist.")
+        if set(wanted) >= known:
+            raise Reject("The only version cannot be deleted. Delete the whole mod page instead.")
+        delete_tags = [tag_of(v) for v in existing["versions"] if v["version"] in wanted]
+        existing["versions"] = [v for v in existing["versions"] if v["version"] not in wanted]
+        site["min_pojarush"] = {k: x for k, x in site.get("min_pojarush", {}).items() if k not in wanted}
     if "summary" in meta:
         summary = clean(meta["summary"], 160, True)
         if not summary:
@@ -353,8 +383,9 @@ def edit(mod_id, data, meta):
         validate_index(tmp)
     output("result", "published")
     output("mod_id", mod_id)
-    output("message", f"{existing['name']} (edit)")
+    output("message", f"{existing['name']} ({'versions deleted' if delete_tags else 'edit'})")
     output("page", f"{SITE_URL}mod.html?id={mod_id}")
+    output("delete_tags", " ".join(delete_tags))
 
 
 def main():

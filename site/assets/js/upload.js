@@ -132,10 +132,12 @@ async function publish() {
 
 (async () => {
   cfg = await config();
-  if (!(await auth.enabled())) return notice(esc(t("loginOff")));
+  const tutorial = `<h2>${esc(t("tut_title"))}</h2>
+    <ol class="tutorial">${[1, 2, 3, 4, 5].map(n => `<li>${esc(t(`tut_${n}`))}</li>`).join("")}</ol>`;
+  if (!(await auth.enabled())) return notice(`<p>${esc(t("loginOff"))}</p>${tutorial}`);
   if (!auth.user || !auth.token) {
     notice(`<h1 style="margin-top:0">${esc(t("up_title"))}</h1><p>${esc(t("loginWhy"))}</p>
-      <button class="btn primary" id="login">${esc(t("login"))}</button>`);
+      <p><button class="btn primary" id="login">${esc(t("login"))}</button></p>${tutorial}`);
     app.querySelector("#login").onclick = () => auth.login();
     return;
   }

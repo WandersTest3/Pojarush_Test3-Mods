@@ -1,8 +1,8 @@
 import { ICONS, auth, avatarUrl, chrome, esc, fmtMonth, fmtNumber, gh, loadIndex, modCard, prepareMod, session, t } from "./core.js";
 
-chrome("");
 const app = document.getElementById("app");
 const login = new URLSearchParams(location.search).get("u") || "";
+chrome(auth.user?.login?.toLowerCase() === login.toLowerCase() ? "profile" : "");
 
 async function profile(name) {
   const key = `pm_u_${name.toLowerCase()}`;
@@ -45,7 +45,7 @@ async function profile(name) {
   const shown = gp?.login || mods[0]?.owners.find(o => o.toLowerCase() === login.toLowerCase()) || login;
   document.title = `${shown} - Pojarush Mods`;
   const total = mods.reduce((n, m) => n + m.downloads, 0);
-  const mine = auth.user?.login?.toLowerCase() === shown.toLowerCase();
+  const mine = auth.user?.login?.toLowerCase() === login.toLowerCase();
   const since = gp?.created_at ? t("onGithubSince", { d: fmtMonth(gp.created_at) }) : "";
   app.innerHTML = `
     <section class="profile">
@@ -57,6 +57,7 @@ async function profile(name) {
       </div>
       <div class="profile-actions">
         <a class="btn" href="https://github.com/${mine ? "settings/profile" : encodeURIComponent(shown)}" target="_blank" rel="noopener">${mine ? ICONS.edit : ICONS.external}${esc(t(mine ? "editOnGithub" : "viewOnGithub"))}</a>
+        ${mine ? `<button type="button" class="btn" id="logout">${esc(t("logout"))}</button>` : ""}
       </div>
       <div class="mod-stats">
         <span class="stat">${ICONS.cube}${esc(mods.length === 1 ? t("projectCount") : t("projectsCount", { n: fmtNumber(mods.length) }))}</span>
@@ -66,4 +67,5 @@ async function profile(name) {
       </div>
     </section>
     <div class="results gallery" id="results">${mods.length ? mods.map(modCard).join("") : `<div class="empty">${esc(t("noModsUser"))}</div>`}</div>`;
+  app.querySelector("#logout")?.addEventListener("click", () => { auth.clear(); location.href = "./"; });
 })();

@@ -20,7 +20,7 @@ const state = {
   filtersOpen: false
 };
 
-const nav = chrome(owner ? "mine" : params.get("focus") ? "search" : "home");
+chrome(owner ? "mine" : params.get("focus") ? "search" : "home");
 let mods = [];
 let cfg;
 
@@ -216,10 +216,4 @@ function update() {
   }
   renderShell();
   update();
-  nav.querySelector('[data-a="search"]').addEventListener("click", e => {
-    if (location.pathname.endsWith("/") || location.pathname.endsWith("index.html")) {
-      e.preventDefault();
-      app.querySelector("#q").focus();
-    }
-  });
 })();

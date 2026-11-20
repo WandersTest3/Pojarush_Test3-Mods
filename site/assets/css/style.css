@@ -228,3 +228,11 @@ main { max-width: 1160px; margin: 0 auto; padding: 8px 16px 0; }
 .footer p { margin: 0 auto 8px; max-width: 70ch; }
 .footer p:first-child { color: var(--text); }
 .footer a { text-decoration: underline; }
+
+.btn.bad { color: #ffb4b4; border-color: #6b2c2c; background: #2a1717; }
+.btn.bad:disabled { opacity: 0.4; }
+.panel.danger { margin-top: 28px; display: grid; gap: 14px; border-color: #4a2424; }
+.panel.danger h2 { margin: 0; font-size: 1.15rem; }
+.panel.danger p { margin: 0; }
+.tutorial { margin: 0; padding-left: 22px; display: grid; gap: 10px; color: #cfcfd6; }
+.notice h2 { margin: 24px 0 10px; font-size: 1.15rem; }

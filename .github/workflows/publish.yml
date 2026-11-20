@@ -85,6 +85,15 @@ jobs:
           if [ -n "$TAG" ]; then gh release delete "$TAG" -R "$REPO" --cleanup-tag -y; fi
           exit 1
 
+      - name: Delete releases
+        if: steps.commit.outcome == 'success' && steps.publish.outputs.delete_tags != ''
+        env:
+          TAGS: ${{ steps.publish.outputs.delete_tags }}
+        run: |
+          for tag in $TAGS; do
+            gh release delete "$tag" -R "$REPO" --cleanup-tag -y || true
+          done
+
       - name: Reply
         if: always() && (steps.publish.outputs.result == 'published' || steps.publish.outputs.result == 'rejected')
         env:

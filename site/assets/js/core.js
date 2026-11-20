@@ -186,7 +186,23 @@ const STRINGS = {
     edit_login: "Sign in to edit this mod.",
     edit_done: "Saved. The page updates in a few minutes.",
     edit_step_check: "Checking and saving (1 to 5 minutes)",
-    edit_back: "Back to the mod page"
+    edit_back: "Back to the mod page",
+    tut_title: "How to post a mod",
+    tut_1: "Sign in with your GitHub account. The site only asks for permission to copy the mods repository into your account and send your mod from there.",
+    tut_2: "Have your mod ready as a .hmod file of up to 5 MiB. Its horizon-mod.toml needs an id, a name, a version and a license.",
+    tut_3: "Tap the + button, choose the .hmod file, then fill in the short description, categories, images and the Pojarush_Test3 version.",
+    tut_4: "Tap Publish. A bot checks the mod in 1 to 5 minutes and the site updates by itself.",
+    tut_5: "To change anything later, open your mod page and tap the pencil. New versions go through the + button, with the same id and a higher version.",
+    edit_danger: "Delete",
+    edit_deleteVersion: "Delete version",
+    edit_deleteMod: "Delete mod page",
+    edit_confirmVersion: "Delete version {v}? Its file is removed from the site and from the downloads. This cannot be undone.",
+    edit_confirmMod: "Delete the whole page of {name}, with all its versions, images and files? This cannot be undone. Type the mod id ({id}) to confirm.",
+    edit_confirmDo: "Delete",
+    edit_cancel: "Cancel",
+    edit_lastVersion: "This is the only version. To remove it, delete the whole mod page.",
+    edit_deleted: "Deleted. The site updates in a few minutes.",
+    edit_step_delete: "Checking and deleting (1 to 5 minutes)"
   },
   pt_br: {
     search: "Pesquisar mods...",
@@ -373,7 +389,23 @@ const STRINGS = {
     edit_login: "Entre para editar este mod.",
     edit_done: "Salvo. A página atualiza em alguns minutos.",
     edit_step_check: "Verificando e salvando (1 a 5 minutos)",
-    edit_back: "Voltar para a página do mod"
+    edit_back: "Voltar para a página do mod",
+    tut_title: "Como postar um mod",
+    tut_1: "Entre com a sua conta do GitHub. O site só pede permissão para copiar o repositório de mods para a sua conta e enviar o seu mod a partir dela.",
+    tut_2: "Deixe o mod pronto em um arquivo .hmod de até 5 MiB. O horizon-mod.toml dele precisa ter id, nome, versão e licença.",
+    tut_3: "Toque no botão +, escolha o arquivo .hmod e preencha a descrição curta, as categorias, as imagens e a versão do Pojarush_Test3.",
+    tut_4: "Toque em Publicar. Um bot confere o mod em 1 a 5 minutos e o site se atualiza sozinho.",
+    tut_5: "Para mudar algo depois, abra a página do mod e toque no lápis. Versões novas entram pelo botão +, com o mesmo id e uma versão maior.",
+    edit_danger: "Excluir",
+    edit_deleteVersion: "Excluir versão",
+    edit_deleteMod: "Excluir página do mod",
+    edit_confirmVersion: "Excluir a versão {v}? O arquivo dela sai do site e dos downloads. Isso não pode ser desfeito.",
+    edit_confirmMod: "Excluir a página inteira de {name}, com todas as versões, imagens e arquivos? Isso não pode ser desfeito. Digite o id do mod ({id}) para confirmar.",
+    edit_confirmDo: "Excluir",
+    edit_cancel: "Cancelar",
+    edit_lastVersion: "Esta é a única versão. Para removê-la, exclua a página inteira do mod.",
+    edit_deleted: "Excluído. O site atualiza em alguns minutos.",
+    edit_step_delete: "Verificando e excluindo (1 a 5 minutos)"
   }
 };
 
@@ -727,12 +759,10 @@ export function chrome(active) {
   const cur = k => (k === active ? ' aria-current="page"' : "");
   nav.innerHTML = `
     <a href="./" aria-label="${esc(t("nav_home"))}"${cur("home")}>${ICONS.home}</a>
-    <a href="./?focus=1" aria-label="${esc(t("nav_search"))}" data-a="search"${cur("search")}>${ICONS.search}</a>
     <a href="upload.html" class="upload" aria-label="${esc(t("nav_upload"))}"${cur("upload")}>${ICONS.plus}</a>
-    <a href="./?owner=me" aria-label="${esc(t("nav_mine"))}"${cur("mine")}>${ICONS.folder}</a>
-    <button type="button" aria-label="${esc(t("nav_account"))}" data-a="account">${user?.avatar_url
-      ? `<img class="avatar" src="${esc(user.avatar_url)}" alt="">` : ICONS.user}</button>`;
-  nav.querySelector('[data-a="account"]').onclick = accountSheet;
+    <a href="${user ? esc(profileHref(user.login)) : "#"}" data-a="account" aria-label="${esc(t("nav_account"))}"${cur("profile")}>${user?.avatar_url
+      ? `<img class="avatar" src="${esc(user.avatar_url)}" alt="">` : ICONS.user}</a>`;
+  if (!user) nav.querySelector('[data-a="account"]').addEventListener("click", e => { e.preventDefault(); accountSheet(); });
   document.body.append(nav);
 
   const foot = document.createElement("footer");
