@@ -14,6 +14,17 @@ export default {
 
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
     const url = new URL(request.url);
+    const clientId = String(env.CLIENT_ID || "").trim();
+    const secret = String(env.CLIENT_SECRET || "").replace(/\s+/g, "");
+    if (url.pathname === "/status") {
+      return reply({
+        client_id: clientId,
+        secret_set: secret.length > 0,
+        secret_length: secret.length,
+        secret_format_ok: /^[0-9a-f]{40}$/.test(secret),
+        allowed_origin: env.ALLOWED_ORIGIN || null
+      });
+    }
     if (url.pathname !== "/token" || request.method !== "POST") return reply({ error: "not found" }, 404);
     if (!allowed) return reply({ error: "origin not allowed" }, 403);
 
@@ -28,7 +39,7 @@ export default {
     const r = await fetch("https://github.com/login/oauth/access_token", {
       method: "POST",
       headers: { Accept: "application/json", "Content-Type": "application/json", "User-Agent": "pojarush-mods-auth" },
-      body: JSON.stringify({ client_id: env.CLIENT_ID, client_secret: env.CLIENT_SECRET, code })
+      body: JSON.stringify({ client_id: clientId, client_secret: secret, code })
     });
     const data = await r.json().catch(() => ({}));
     if (!data.access_token) return reply({ error: data.error_description || data.error || "login failed" }, 400);
