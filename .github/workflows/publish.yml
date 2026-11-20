@@ -1,0 +1,113 @@
+name: Publish
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      result: ${{ steps.publish.outputs.result }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - name: Check for a submission
+        id: check
+        run: |
+          n=$(gh api "repos/$REPO/pulls/$PR_NUMBER/files" --paginate --jq '[.[] | select(.filename | startswith("submissions/"))] | length' | awk '{s+=$1} END {print s+0}')
+          echo "found=$([ "$n" -gt 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.found == 'true'
+        with:
+          ref: main
+
+      - name: Fetch the submission
+        id: fetch
+        if: steps.check.outputs.found == 'true'
+        run: |
+          git fetch --no-tags --depth=1 origin "+refs/pull/$PR_NUMBER/head:refs/remotes/origin/submission"
+          if [ "$(git rev-parse origin/submission)" = "$HEAD_SHA" ]; then
+            echo "current=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "current=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - id: inspector
+        if: steps.fetch.outputs.current == 'true'
+        uses: ./.github/actions/inspector
+
+      - uses: actions/setup-python@v5
+        if: steps.fetch.outputs.current == 'true'
+        with:
+          python-version: "3.12"
+
+      - name: Validate and release
+        id: publish
+        if: steps.fetch.outputs.current == 'true'
+        env:
+          INSPECT: ${{ steps.inspector.outputs.path }}
+        run: |
+          pip install --quiet pillow
+          python scripts/publish.py
+
+      - name: Commit
+        id: commit
+        if: steps.publish.outputs.result == 'published'
+        env:
+          MESSAGE: ${{ steps.publish.outputs.message }}
+          TAG: ${{ steps.publish.outputs.tag }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add registry site/mods
+          git commit -m "Publish $MESSAGE"
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push origin HEAD:main; then exit 0; fi
+            sleep 5
+          done
+          gh release delete "$TAG" -R "$REPO" --cleanup-tag -y
+          exit 1
+
+      - name: Reply
+        if: always() && (steps.publish.outputs.result == 'published' || steps.publish.outputs.result == 'rejected')
+        env:
+          RESULT: ${{ steps.publish.outputs.result }}
+          COMMITTED: ${{ steps.commit.outcome }}
+          MESSAGE: ${{ steps.publish.outputs.message }}
+          PAGE: ${{ steps.publish.outputs.page }}
+          ERROR: ${{ steps.publish.outputs.error }}
+        run: |
+          if [ "$RESULT" = "published" ] && [ "$COMMITTED" = "success" ]; then
+            body=$(printf '✅ **%s** publicado / published.\n\n%s\n\nO site atualiza em alguns minutos. / The site updates in a few minutes.' "$MESSAGE" "$PAGE")
+          elif [ "$RESULT" = "published" ]; then
+            body='❌ Não foi possível salvar o envio. Tente de novo. / The submission could not be saved. Try again.'
+          else
+            body=$(printf '❌ Envio recusado / Submission refused:\n\n%s' "$ERROR")
+          fi
+          gh pr comment "$PR_NUMBER" -R "$REPO" --body "$body"
+          gh pr close "$PR_NUMBER" -R "$REPO"
+
+  deploy:
+    needs: publish
+    if: needs.publish.outputs.result == 'published'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/site.yml

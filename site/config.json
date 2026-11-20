@@ -1,0 +1,29 @@
+{
+  "repo": "WandersTest3/Pojarush_Test3-Mods",
+  "siteUrl": "https://wanderstest3.github.io/Pojarush_Test3-Mods/",
+  "oauthClientId": "",
+  "authWorker": "",
+  "maxModMiB": 5,
+  "maxIconMiB": 2,
+  "maxBannerMiB": 8,
+  "maxCategories": 3,
+  "defaultGame": "26.3",
+  "categories": [
+    "adventure",
+    "decoration",
+    "equipment",
+    "food",
+    "game-mechanics",
+    "hud",
+    "library",
+    "magic",
+    "mobs",
+    "optimization",
+    "social",
+    "storage",
+    "technology",
+    "transportation",
+    "utility",
+    "worldgen"
+  ]
+}

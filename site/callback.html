@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e0e11">
+<meta name="referrer" content="no-referrer">
+<title>Pojarush Mods</title>
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<main id="app"><div class="skeleton"></div></main>
+<script type="module">
+import { auth, config, esc, gh, session } from "./assets/js/core.js";
+const app = document.getElementById("app");
+const q = new URLSearchParams(location.search);
+history.replaceState(null, "", location.pathname);
+const fail = msg => { app.innerHTML = `<div class="notice box error"><p>${esc(msg)}</p><a class="btn" href="./">Pojarush Mods</a></div>`; };
+(async () => {
+  const state = session.getItem("pm_state");
+  session.removeItem("pm_state");
+  if (q.get("error")) return fail(q.get("error_description") || q.get("error"));
+  if (!q.get("code") || !state || q.get("state") !== state) return fail("Login expired. Try again.");
+  const cfg = await config();
+  const r = await fetch(new URL("token", cfg.authWorker.endsWith("/") ? cfg.authWorker : cfg.authWorker + "/"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code: q.get("code") })
+  }).catch(() => null);
+  const data = r ? await r.json().catch(() => ({})) : {};
+  if (!r?.ok || !data.access_token) return fail(data.error || "Login failed.");
+  auth.save(data.access_token, null);
+  const user = await gh("/user").catch(() => null);
+  if (!user) { auth.clear(); return fail("Login failed."); }
+  auth.save(data.access_token, { login: user.login, avatar_url: user.avatar_url });
+  const back = session.getItem("pm_return") || "./";
+  session.removeItem("pm_return");
+  location.replace(back.startsWith("/") ? back : "./");
+})();
+</script>
+</body>
+</html>

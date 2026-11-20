@@ -1,2 +1,41 @@
-# Pojarush_Test3-Mods
-Mods for my launcher
+# Pojarush Mods
+
+Site de mods `.hmod` para o launcher Pojarush: https://wanderstest3.github.io/Pojarush_Test3-Mods/
+
+## Como funciona
+
+- O site (`site/`) é estático e fica no GitHub Pages.
+- Quem envia um mod entra com o GitHub. O site cria um fork deste repositório na conta da pessoa e abre um pull request com `submissions/<id>/`.
+- A Action `Publish` valida o `.hmod` com o código do próprio Horizon (`tools/hmod-inspect`, compilado a partir de `WandersTest3/Pojarush_Test3`), cria a Release `<id>-<versão>` com o arquivo, grava `registry/<id>.json` e as imagens em `site/mods/<id>/`, comenta o resultado e fecha o pull request. Depois publica o site.
+- Só os donos de um mod (`owners`) podem enviar novas versões dele. Uma versão já publicada não pode ser enviada de novo.
+- `index.json` segue o formato schema 1 do registro do Horizon (`docs/api/mod-index.md`). O launcher pode ler este índice com `HORIZON_MOD_INDEX=https://wanderstest3.github.io/Pojarush_Test3-Mods/index.json`.
+- A Action `Site` publica o site a cada push na `main`, a cada 6 horas (para atualizar os downloads) e quando chamada pela `Publish`.
+
+## Configuração (uma vez)
+
+1. **Pages:** Settings > Pages > Build and deployment > Source: **GitHub Actions**. Depois, em Actions > Site, use **Run workflow**.
+2. **OAuth App:** github.com > Settings > Developer settings > OAuth Apps > New OAuth App.
+   - Homepage URL: `https://wanderstest3.github.io/Pojarush_Test3-Mods/`
+   - Authorization callback URL: `https://wanderstest3.github.io/Pojarush_Test3-Mods/callback.html`
+   - Copie o **Client ID** e gere um **Client secret**.
+3. **Cloudflare Worker** (plano gratuito): dash.cloudflare.com > Workers & Pages > Create > Worker > Deploy > Edit code. Cole o conteúdo de `worker/worker.js` e clique em Deploy. Em Settings > Variables and Secrets, adicione:
+   - `CLIENT_ID`: o Client ID (texto)
+   - `CLIENT_SECRET`: o Client secret (tipo **Secret**)
+   - `ALLOWED_ORIGIN`: `https://wanderstest3.github.io`
+4. Em `site/config.json`, preencha `oauthClientId` com o Client ID e `authWorker` com o endereço do Worker (ex.: `https://pojarush-mods-auth.<conta>.workers.dev`).
+
+Sem os passos 2 a 4, o site funciona para ver e baixar mods, e a página de envio mostra que o envio ainda não foi ativado.
+
+## Remover um mod ou arquivo
+
+Adicione uma entrada em `registry/revoked.json` (formato `revoked` do schema 1):
+
+```json
+[{ "id": "mod_id", "reason": "Motivo", "date": "2026-11-20" }]
+```
+
+Com `"sha256"`, só aquele arquivo é retirado; sem ele, o mod inteiro.
+
+## Limites
+
+Definidos em `site/config.json`: `.hmod` até 5 MiB, ícone até 2 MiB, banner até 8 MiB, até 3 categorias.

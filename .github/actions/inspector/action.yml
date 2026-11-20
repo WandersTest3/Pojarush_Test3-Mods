@@ -1,0 +1,32 @@
+name: hmod-inspect
+description: Builds the .hmod inspector from the Pojarush_Test3 Horizon crates
+outputs:
+  path:
+    description: Path of the built binary
+    value: ${{ steps.done.outputs.path }}
+runs:
+  using: composite
+  steps:
+    - name: Fetch Horizon crates
+      id: src
+      shell: bash
+      run: |
+        git clone --depth 1 --filter=blob:none --sparse https://github.com/WandersTest3/Pojarush_Test3 .pojarush
+        git -C .pojarush sparse-checkout set horizon/crates horizon/third_party/naga
+        cp .pojarush/horizon/Cargo.lock tools/hmod-inspect/Cargo.lock
+        echo "sha=$(git -C .pojarush rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+    - uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry/index
+          ~/.cargo/registry/cache
+          tools/hmod-inspect/target
+        key: hmod-inspect-${{ runner.os }}-${{ steps.src.outputs.sha }}-${{ hashFiles('tools/hmod-inspect/src/**', 'tools/hmod-inspect/Cargo.toml') }}
+        restore-keys: |
+          hmod-inspect-${{ runner.os }}-
+    - name: Build
+      shell: bash
+      run: cargo build --release --manifest-path tools/hmod-inspect/Cargo.toml
+    - id: done
+      shell: bash
+      run: echo "path=$GITHUB_WORKSPACE/tools/hmod-inspect/target/release/hmod-inspect" >> "$GITHUB_OUTPUT"
