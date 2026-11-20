@@ -40,7 +40,7 @@
       "library"
     ],
     "icon_file": "mods/pojarush_modmenu/icon.png",
-    "banner": "mods/pojarush_modmenu/banner.webp",
+    "banner": null,
     "code": true,
     "contact": {
       "homepage": "https://github.com/WandersTest3/Pojarush_Test3",
@@ -58,6 +58,12 @@
       }
     },
     "created": "2026-11-20T08:08:35Z",
-    "updated": "2026-11-20T08:08:35Z"
+    "updated": "2026-11-20T08:08:35Z",
+    "gallery": [
+      "mods/pojarush_modmenu/g-116d7c9859.webp"
+    ],
+    "featured": null,
+    "description_image": null,
+    "edited": "2026-11-20T09:30:35Z"
   }
 }
