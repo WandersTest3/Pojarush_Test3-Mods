@@ -1,0 +1,23 @@
+{
+  "summary": "Shows your XYZ position and the world day, with settings to move and style it.",
+  "categories": [
+    "hud",
+    "utility",
+    "game-mechanics"
+  ],
+  "source": "https://github.com/MCKIER15363/DAY-COUNTER.git",
+  "gallery": [
+    {
+      "file": "gallery-1.jpg"
+    },
+    {
+      "file": "gallery-2.jpg"
+    }
+  ],
+  "featured": null,
+  "description_image": {
+    "file": "description-image.jpg"
+  },
+  "pojarush": "2.0.0",
+  "license": "All Rights Reserved"
+}
