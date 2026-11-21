@@ -1,0 +1,71 @@
+{
+  "id": "pojarush_modmenu",
+  "kind": "mod",
+  "name": "PR Mod Menu",
+  "summary": "A Mod Menu like Fabric's: the installed mods with icon, name and description on the left, and the picked one's version, authors, license, links and settings on",
+  "description": "A Mod Menu like Fabric's: the installed mods with icon, name and description on the left, and the picked one's version, authors, license, links and settings on the right, with a search box. Sort A to Z or Z to A and filter by mods with settings, on or off. Open it with its icon in the top right corner of the title screen and the pause menu, or with M (Controls > Key Binds).",
+  "authors": [
+    "Wanders_Test3"
+  ],
+  "owners": [
+    "WandersTest3"
+  ],
+  "license": "Mod Test3 License V1.0",
+  "source": "https://github.com/WandersTest3/Pojarush_Test3/tree/main/horizon/mods/pojarush-modmenu",
+  "icon": "https://wanderstest3.github.io/Pojarush_Test3-Mods/mods/pojarush_modmenu/icon.png",
+  "versions": [
+    {
+      "version": "1.3.1",
+      "published": "2026-11-21",
+      "api": "0.1",
+      "side": "client",
+      "capabilities": [
+        "input",
+        "ui"
+      ],
+      "game": "26.3",
+      "file": {
+        "name": "pojarush_modmenu-1.3.1.hmod",
+        "url": "https://github.com/WandersTest3/Pojarush_Test3-Mods/releases/download/pojarush_modmenu-1.3.1/pojarush_modmenu-1.3.1.hmod",
+        "size": 10696,
+        "sha256": "9f765edb2ad7361721827865c936541a6aa2dfcafd530bb4dcf766468144adca"
+      }
+    }
+  ],
+  "site": {
+    "categories": [
+      "hud",
+      "library",
+      "utility"
+    ],
+    "icon_file": "mods/pojarush_modmenu/icon.png",
+    "gallery": [
+      "mods/pojarush_modmenu/g-de88328619.webp",
+      "mods/pojarush_modmenu/g-e4a21dd426.webp"
+    ],
+    "featured": "mods/pojarush_modmenu/g-de88328619.webp",
+    "banner": "mods/pojarush_modmenu/banner-8df74833fe.webp",
+    "description_image": "mods/pojarush_modmenu/d-6998bc27e5.webp",
+    "min_pojarush": {
+      "1.3.1": "2.0.0"
+    },
+    "code": true,
+    "contact": {
+      "homepage": "https://github.com/WandersTest3/Pojarush_Test3",
+      "issues": "https://github.com/WandersTest3/Pojarush_Test3/issues",
+      "sources": "https://github.com/WandersTest3/Pojarush_Test3/tree/main/horizon/mods/pojarush-modmenu"
+    },
+    "translations": {
+      "pt_br": {
+        "name": "",
+        "summary": "Um Mod Menu como o do Fabric: os mods instalados com ícone, nome e descrição à esquerda, e a versão, os autores, a licença, os links e as configurações do escol"
+      },
+      "pt_pt": {
+        "name": "",
+        "summary": "Um Mod Menu como o do Fabric: os mods instalados com ícone, nome e descrição à esquerda, e a versão, os autores, a licença, as ligações e as definições do escol"
+      }
+    },
+    "created": "2026-11-21T19:38:10Z",
+    "updated": "2026-11-21T19:38:10Z"
+  }
+}
