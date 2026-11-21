@@ -1,0 +1,73 @@
+{
+  "id": "pojarush_fps",
+  "kind": "mod",
+  "name": "PR FPS",
+  "summary": "Frames per second anywhere on the screen, at any size, with the slowest frame and the 1% low if you like. Drag it with the finger or the mouse at any time, in g",
+  "description": "Frames per second anywhere on the screen, at any size, with the slowest frame and the 1% low if you like. Drag it with the finger or the mouse at any time, in game or in any menu. Turns Horizon's own overlay off.",
+  "authors": [
+    "Wanders_Test3"
+  ],
+  "owners": [
+    "WandersTest3"
+  ],
+  "license": "Mod Test3 License V1.0",
+  "source": "https://github.com/WandersTest3/Pojarush_Test3/tree/main/horizon/mods/pojarush-fps",
+  "icon": "https://wanderstest3.github.io/Pojarush_Test3-Mods/mods/pojarush_fps/icon.png",
+  "versions": [
+    {
+      "version": "1.1.10",
+      "published": "2026-11-21",
+      "api": "0.1",
+      "side": "client",
+      "capabilities": [
+        "render",
+        "ui",
+        "storage"
+      ],
+      "game": "26.3",
+      "file": {
+        "name": "pojarush_fps-1.1.10.hmod",
+        "url": "https://github.com/WandersTest3/Pojarush_Test3-Mods/releases/download/pojarush_fps-1.1.10/pojarush_fps-1.1.10.hmod",
+        "size": 41036,
+        "sha256": "3a8ad0ae639c0d876d0f4f09632b400ffd582cffd1c8ac8bcf20b0ccae158c1c"
+      }
+    }
+  ],
+  "site": {
+    "categories": [
+      "hud",
+      "game-mechanics",
+      "utility"
+    ],
+    "icon_file": "mods/pojarush_fps/icon.png",
+    "gallery": [
+      "mods/pojarush_fps/g-d5d7bd99a8.webp",
+      "mods/pojarush_fps/g-677547c5d0.webp",
+      "mods/pojarush_fps/g-e6ffeda9ac.webp"
+    ],
+    "featured": "mods/pojarush_fps/g-e6ffeda9ac.webp",
+    "banner": "mods/pojarush_fps/banner-f5248789aa.webp",
+    "description_image": "mods/pojarush_fps/d-f86c27adab.webp",
+    "min_pojarush": {
+      "1.1.10": "2.0.0"
+    },
+    "code": true,
+    "contact": {
+      "homepage": "https://github.com/WandersTest3/Pojarush_Test3",
+      "issues": "https://github.com/WandersTest3/Pojarush_Test3/issues",
+      "sources": "https://github.com/WandersTest3/Pojarush_Test3/tree/main/horizon/mods/pojarush-fps"
+    },
+    "translations": {
+      "pt_br": {
+        "name": "",
+        "summary": "Quadros por segundo em qualquer lugar da tela, em qualquer tamanho, com o quadro mais lento e o 1% mais baixo se quiser. Arraste com o dedo ou com o mouse a qua"
+      },
+      "pt_pt": {
+        "name": "",
+        "summary": "Fotogramas por segundo em qualquer sítio do ecrã, em qualquer tamanho, com o fotograma mais lento e o 1% mais baixo se quiseres. Arraste com o dedo ou com o mou"
+      }
+    },
+    "created": "2026-11-21T19:42:47Z",
+    "updated": "2026-11-21T19:42:47Z"
+  }
+}
