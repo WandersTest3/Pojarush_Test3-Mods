@@ -106,7 +106,7 @@ jobs:
           if [ "$RESULT" = "published" ] && [ "$COMMITTED" = "success" ]; then
             body=$(printf '✅ **%s** publicado / published.\n\n%s\n\nO site atualiza em alguns minutos. / The site updates in a few minutes.' "$MESSAGE" "$PAGE")
           elif [ "$RESULT" = "published" ]; then
-            body='❌ Não foi possível salvar o envio. Tente de novo. / The submission could not be saved. Try again.'
+            body='❌ The submission could not be saved. Try again.'
           else
             body=$(printf '❌ Envio recusado / Submission refused:\n\n%s' "$ERROR")
           fi

@@ -1,49 +1,48 @@
 # Pojarush Mods
 
-Site de mods `.hmod` para o launcher Pojarush: https://wanderstest3.github.io/Pojarush_Test3-Mods/
+A site for `.hmod` mods for the Pojarush launcher: https://wanderstest3.github.io/Pojarush_Test3-Mods/
 
-## Como funciona
+## How it works
 
-- O site (`site/`) é estático e fica no GitHub Pages.
-- Quem envia um mod entra com o GitHub. O site cria um fork deste repositório na conta da pessoa e abre um pull request com `submissions/<id>/`.
-- A Action `Publish` valida o `.hmod` com o código do próprio Horizon (`tools/hmod-inspect`, compilado a partir de `WandersTest3/Pojarush_Test3`), cria a Release `<id>-<versão>` com o arquivo, grava `registry/<id>.json` e as imagens em `site/mods/<id>/`, comenta o resultado e fecha o pull request. Depois publica o site.
-- Só os donos de um mod (`owners`) podem enviar novas versões dele. Uma versão já publicada não pode ser enviada de novo.
-- `index.json` segue o formato schema 1 do registro do Horizon (`docs/api/mod-index.md`). O launcher pode ler este índice com `HORIZON_MOD_INDEX=https://wanderstest3.github.io/Pojarush_Test3-Mods/index.json`.
-- A Action `Site` publica o site a cada push na `main`, a cada 6 horas (para atualizar os downloads) e quando chamada pela `Publish`.
+- The site (`site/`) is static and hosted on GitHub Pages.
+- To submit a mod, you sign in with GitHub. The site forks this repository into your account and opens a pull request with `submissions/<id>/`.
+- The `Publish` Action validates the `.hmod` with Horizon's own code (`tools/hmod-inspect`, built from `WandersTest3/Pojarush_Test3`), creates the Release `<id>-<version>` with the file, writes `registry/<id>.json` and the images in `site/mods/<id>/`, comments the result and closes the pull request. Then it publishes the site.
+- Only a mod's owners (`owners`) can submit new versions of it. A published version cannot be submitted again.
+- `index.json` follows the schema 1 format of Horizon's registry (`docs/api/mod-index.md`). The launcher can read this index with `HORIZON_MOD_INDEX=https://wanderstest3.github.io/Pojarush_Test3-Mods/index.json`.
+- The `Site` Action publishes the site on every push to `main`, every 6 hours (to refresh download counts) and when called by `Publish`.
 
-## Configuração (uma vez)
+## Setup (one time)
 
-1. **Pages:** Settings > Pages > Build and deployment > Source: **GitHub Actions**. Depois, em Actions > Site, use **Run workflow**.
+1. **Pages:** Settings > Pages > Build and deployment > Source: **GitHub Actions**. Then, in Actions > Site, use **Run workflow**.
 2. **OAuth App:** github.com > Settings > Developer settings > OAuth Apps > New OAuth App.
    - Homepage URL: `https://wanderstest3.github.io/Pojarush_Test3-Mods/`
    - Authorization callback URL: `https://wanderstest3.github.io/Pojarush_Test3-Mods/callback.html`
-   - Copie o **Client ID** e gere um **Client secret**.
-3. **Cloudflare Worker** (plano gratuito): dash.cloudflare.com > Workers & Pages > Create > Import a repository, escolha este repositório. O Worker se chama `pojarush-test3-mods` e é publicado a cada push, usando `wrangler.toml` (que já define `CLIENT_ID` e `ALLOWED_ORIGIN`). No Worker, em Settings > Runtime variables and secrets > Add variable, crie `CLIENT_SECRET` com o Client secret e marque **Secret**. Para conferir, abra `https://pojarush-test3-mods.wanderstest3.workers.dev/status`: deve mostrar `"secret_set":true`.
-4. Em `site/config.json`, `oauthClientId` é o Client ID e `authWorker` é o endereço do Worker.
+   - Copy the **Client ID** and generate a **Client secret**.
+3. **Cloudflare Worker** (free plan): dash.cloudflare.com > Workers & Pages > Create > Import a repository, and pick this repository. The Worker is named `pojarush-test3-mods` and is deployed on every push, using `wrangler.toml` (which already defines `CLIENT_ID` and `ALLOWED_ORIGIN`). In the Worker, under Settings > Runtime variables and secrets > Add variable, create `CLIENT_SECRET` with the Client secret and tick **Secret**. To check, open `https://pojarush-test3-mods.wanderstest3.workers.dev/status`: it must show `"secret_set":true`.
+4. In `site/config.json`, `oauthClientId` is the Client ID and `authWorker` is the Worker address.
 
-Sem os passos 2 a 4, o site funciona para ver e baixar mods, e a página de envio mostra que o envio ainda não foi ativado.
+Without steps 2 to 4, the site still works for browsing and downloading mods, and the upload page says that uploading is not enabled yet.
 
-## Remover um mod ou arquivo
+## Removing a mod or file
 
-Adicione uma entrada em `registry/revoked.json` (formato `revoked` do schema 1):
+Add an entry to `registry/revoked.json` (the `revoked` format of schema 1):
 
 ```json
-[{ "id": "mod_id", "reason": "Motivo", "date": "2026-11-20" }]
+[{ "id": "mod_id", "reason": "Reason", "date": "2026-11-20" }]
 ```
 
-Com `"sha256"`, só aquele arquivo é retirado; sem ele, o mod inteiro.
+With `"sha256"`, only that file is withdrawn; without it, the whole mod.
 
-## Limites
+## Limits
 
-Definidos em `site/config.json`: `.hmod` até 5 MiB, ícone até 2 MiB, banner até 8 MiB, até 3 categorias.
+Defined in `site/config.json`: `.hmod` up to 5 MiB, icon up to 2 MiB (at least 8×8 px), images up to 8 MiB, up to 5 gallery images, up to 3 categories.
 
+## Pages, edits and profiles
 
-## Páginas, edição e perfis
-
-- `mod.html?id=<id>`: descrição, galeria (até 5 imagens), changelog, versões e detalhes. A imagem marcada com a estrela na galeria vira o banner do card.
-- `user.html?u=<login>`: perfil do criador com todos os mods dele.
-- `edit.html?id=<id>`: só os donos do mod. Envia um pull request com `edits/<id>/edit.json` (e imagens/descrição); o bot valida o dono e atualiza o registro, sem criar release.
-- O envio pede a versão mínima do Pojarush_Test3 (`pojarushVersions` em `site/config.json`, hoje só `2.0.0`).
-- O link do Discord e os avisos do rodapé vêm de `site/config.json` (`discord`) e dos textos em `assets/js/core.js` e `assets/js/i18n.js`.
-- Excluir: na página de edição, os donos podem excluir uma versão (`delete_versions`) ou a página inteira (`delete_mod`). O bot remove o registro e as imagens e, depois do commit, apaga as releases correspondentes.
-- A barra inferior tem 3 botões: início, enviar mod e perfil (o perfil abre `user.html?u=<login>`, onde fica o botão de sair).
+- `mod.html?id=<id>`: description, gallery (up to 5 images), changelog, versions and details. The image starred in the gallery becomes the card banner.
+- `user.html?u=<login>`: the creator's profile with all of their mods.
+- `edit.html?id=<id>`: mod owners only. Sends a pull request with `edits/<id>/edit.json` (and images/description); the bot checks the owner and updates the registry without creating a release.
+- Uploading asks for the minimum Pojarush_Test3 version (`pojarushVersions` in `site/config.json`, currently only `2.0.0`).
+- The Discord link and the footer notices come from `site/config.json` (`discord`) and the texts in `assets/js/core.js` and `assets/js/i18n.js`.
+- Deleting: on the edit page, owners can delete a version (`delete_versions`) or the whole page (`delete_mod`). The bot removes the registry entry and images and, after the commit, deletes the matching releases.
+- The bottom bar has 3 buttons: home, upload mod and profile (profile opens `user.html?u=<login>`, where the sign-out button is).
