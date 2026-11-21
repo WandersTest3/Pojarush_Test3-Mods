@@ -1,0 +1,27 @@
+{
+  "summary": "Iris's shortcuts for shader packs: O opens the pack list, K turns shaders on and off, R reloads the pack. Adds a Shader Packs button to Video Settings, opening",
+  "categories": [],
+  "source": "https://github.com/WandersTest3/Pojarush_Test3/tree/main/horizon/mods/pojarush-shaders",
+  "gallery": [
+    {
+      "file": "gallery-1.jpg"
+    },
+    {
+      "file": "gallery-2.jpg"
+    },
+    {
+      "file": "gallery-3.jpg"
+    },
+    {
+      "file": "gallery-4.jpg"
+    },
+    {
+      "file": "gallery-5.jpg"
+    }
+  ],
+  "featured": 4,
+  "description_image": {
+    "file": "description-image.jpg"
+  },
+  "pojarush": "2.0.0"
+}

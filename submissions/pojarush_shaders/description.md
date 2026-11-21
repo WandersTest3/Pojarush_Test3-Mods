@@ -1,0 +1,1 @@
+Iris's shortcuts for shader packs: O opens the pack list, K turns shaders on and off, R reloads the pack. Adds a Shader Packs button to Video Settings, opening an Iris-style pack screen. Keys are in Controls > Key Binds.
