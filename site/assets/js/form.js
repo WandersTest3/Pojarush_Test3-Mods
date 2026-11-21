@@ -134,7 +134,7 @@ export function bindFields(app, cfg, s, mode) {
     s.icon = f;
     paintThumb(app, "icon", f);
   };
-  app.querySelector("#iconRemove").onclick = () => { s.icon = null; paintThumb(app, "icon", null); };
+  app.querySelector("#iconRemove").onclick = () => { s.icon = null; paintThumb(app, "icon", null, s.detectedIcon); };
 
   const gallery = app.querySelector("#gallery");
   const galleryInput = app.querySelector("#galleryInput");

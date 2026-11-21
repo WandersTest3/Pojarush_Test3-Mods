@@ -8,7 +8,7 @@
   "maxIconMiB": 2,
   "minIconPx": 8,
   "maxImageMiB": 8,
-  "maxGalleryImages": 3,
+  "maxGalleryImages": 5,
   "maxCategories": 3,
   "defaultGame": "26.3",
   "pojarushVersions": [

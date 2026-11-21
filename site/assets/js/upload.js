@@ -90,7 +90,8 @@ async function pickHmod(file) {
   s.descImage = site.description_image ? { kind: "keep", url: site.description_image } : null;
   s.hadDescImage = Boolean(s.descImage);
   s.icon = null;
-  setIcon(app, null);
+  s.detectedIcon = mod.icon ? URL.createObjectURL(mod.icon) : null;
+  setIcon(app, s.detectedIcon);
   paintGallery(app, cfg, s);
   paintDesc(app, s);
 

@@ -21,7 +21,7 @@ Image.MAX_IMAGE_PIXELS = 40_000_000
 MIB = 1 << 20
 IMAGE_RE = r"(png|jpe?g|webp)"
 ICON_TARGET = 128
-FILE_RE = re.compile(rf"^(icon|description-image|gallery-[1-3])\.{IMAGE_RE}$")
+FILE_RE = re.compile(rf"^(icon|description-image|gallery-[1-5])\.{IMAGE_RE}$")
 TEXT_FILES = {
     "submissions": {"mod.hmod", "submission.json", "description.md"},
     "edits": {"edit.json", "description.md"},

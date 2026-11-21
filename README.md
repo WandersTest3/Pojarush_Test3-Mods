@@ -40,7 +40,7 @@ Definidos em `site/config.json`: `.hmod` até 5 MiB, ícone até 2 MiB, banner a
 
 ## Páginas, edição e perfis
 
-- `mod.html?id=<id>`: descrição, galeria (até 3 imagens), changelog, versões e detalhes. A imagem marcada com a estrela na galeria vira o banner do card.
+- `mod.html?id=<id>`: descrição, galeria (até 5 imagens), changelog, versões e detalhes. A imagem marcada com a estrela na galeria vira o banner do card.
 - `user.html?u=<login>`: perfil do criador com todos os mods dele.
 - `edit.html?id=<id>`: só os donos do mod. Envia um pull request com `edits/<id>/edit.json` (e imagens/descrição); o bot valida o dono e atualiza o registro, sem criar release.
 - O envio pede a versão mínima do Pojarush_Test3 (`pojarushVersions` em `site/config.json`, hoje só `2.0.0`).
