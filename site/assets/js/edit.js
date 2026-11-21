@@ -1,5 +1,5 @@
 import { ICONS, auth, chrome, config, esc, iconUrl, loadIndex, sheet, t } from "./core.js";
-import { bindFields, fieldsHtml, newState, paintCats, paintDesc, paintGallery, payload, sendPR, setIcon, showError, stepsView, validateFields } from "./form.js";
+import { bindFields, setLicense, fieldsHtml, newState, paintCats, paintDesc, paintGallery, payload, sendPR, setIcon, showError, stepsView, validateFields } from "./form.js";
 
 chrome("");
 const app = document.getElementById("app");
@@ -56,6 +56,7 @@ function notice(html, error = false) {
   app.querySelector("#summary").dispatchEvent(new Event("input"));
   app.querySelector("#description").value = p.description || "";
   app.querySelector("#source").value = p.source && !p.source.startsWith(cfg.siteUrl) ? p.source : "";
+  setLicense(app, p.license);
   s.cats = new Set(site.categories || []);
   s.gallery = (site.gallery || []).map(path => ({ kind: "keep", name: path.split("/").pop(), url: path }));
   s.featured = site.featured ? s.gallery.findIndex(g => site.featured.endsWith(g.name)) : -1;

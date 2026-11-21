@@ -369,6 +369,11 @@ def edit(mod_id, data, meta):
         if not summary:
             raise Reject("A short description (summary) is required.")
         existing["summary"] = summary
+    if "license" in meta:
+        license_ = clean(meta["license"], 100, True)
+        if not license_:
+            raise Reject("A license is required.")
+        existing["license"] = license_
     if "source" in meta:
         existing["source"] = meta["source"] if https(meta["source"]) else f"{SITE_URL}mod.html?id={mod_id}"
     description = read_description(data)
@@ -446,11 +451,11 @@ def main():
             summary = existing["summary"] if existing else clean(m["description"], 160, True)
         if not summary:
             raise Reject("A short description (summary) is required.")
-        license_ = clean(m["license"], 100, True) or clean(meta.get("license"), 100, True)
+        license_ = clean(meta.get("license"), 100, True) or clean(m["license"], 100, True)
         if not license_ and existing:
             license_ = existing["license"]
         if not license_:
-            raise Reject("A license is required: set `license` in `horizon-mod.toml` or pick one when uploading.")
+            license_ = "MIT"
         contact = m["contact"]
         source = next((u for u in (meta.get("source"), contact["sources"], contact["homepage"]) if https(u)), None)
         if not source:

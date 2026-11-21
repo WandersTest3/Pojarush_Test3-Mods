@@ -2,7 +2,29 @@ import { ICONS, auth, esc, gh, markdown, safeUrl, t } from "./core.js";
 
 export const MIB = 1048576;
 export const IMAGE_TYPES = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp" };
-const LICENSES = ["All Rights Reserved", "MIT", "Apache-2.0", "GPL-3.0-only", "LGPL-3.0-only", "MPL-2.0", "CC-BY-4.0", "CC-BY-NC-4.0", "CC0-1.0"];
+const LICENSES = [
+  ["MIT", "MIT License"],
+  ["Apache-2.0", "Apache License 2.0"],
+  ["GPL-3.0-only", "GNU GPL v3 only"],
+  ["GPL-3.0-or-later", "GNU GPL v3 or later"],
+  ["GPL-2.0-only", "GNU GPL v2 only"],
+  ["LGPL-3.0-only", "GNU LGPL v3"],
+  ["LGPL-2.1-only", "GNU LGPL v2.1"],
+  ["AGPL-3.0-only", "GNU AGPL v3"],
+  ["MPL-2.0", "Mozilla Public License 2.0"],
+  ["BSD-2-Clause", "BSD 2-Clause"],
+  ["BSD-3-Clause", "BSD 3-Clause"],
+  ["ISC", "ISC License"],
+  ["Zlib", "zlib License"],
+  ["Unlicense", "The Unlicense"],
+  ["CC0-1.0", "CC0 1.0 (public domain)"],
+  ["CC-BY-4.0", "CC BY 4.0"],
+  ["CC-BY-SA-4.0", "CC BY-SA 4.0"],
+  ["CC-BY-NC-4.0", "CC BY-NC 4.0"],
+  ["CC-BY-NC-SA-4.0", "CC BY-NC-SA 4.0"],
+  ["All Rights Reserved", "All Rights Reserved"]
+];
+const DEFAULT_LICENSE = "MIT";
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 export function newState() {
@@ -52,13 +74,13 @@ export function fieldsHtml(cfg, mode) {
         <label for="pojarush">${esc(t("up_pojarush"))}</label>
         <select class="input" id="pojarush">${cfg.pojarushVersions.map(v => `<option value="${esc(v)}">${esc(t("up_pojarushOpt", { v }))}</option>`).join("")}</select>
         <span class="hint">${esc(t("up_pojarushHint"))}</span>
-      </div>
-      <div id="licenseRow" hidden>
-        <label for="license">${esc(t("up_license"))}</label>
-        <input class="input" id="license" list="licenses" maxlength="100">
-        <datalist id="licenses">${LICENSES.map(l => `<option value="${esc(l)}">`).join("")}</datalist>
-        <span class="hint">${esc(t("up_licenseHint"))}</span>
       </div>` : ""}
+      <div id="licenseRow">
+        <label for="licenseSel">${esc(t("up_license"))}</label>
+        <select class="input" id="licenseSel">${LICENSES.map(([v, n]) => `<option value="${esc(v)}">${esc(n)}</option>`).join("")}<option value="__other">${esc(t("up_licenseOther"))}</option></select>
+        <input class="input" id="license" maxlength="100" placeholder="${esc(t("up_licenseCustom"))}" hidden>
+        <span class="hint">${esc(t("up_licenseHint"))}</span>
+      </div>
       <div>
         <label for="source">${esc(t("up_source"))}</label>
         <input class="input" id="source" type="url" inputmode="url" placeholder="https://github.com/..." maxlength="500">
@@ -122,6 +144,14 @@ export function bindFields(app, cfg, s, mode) {
     else if (s.cats.size < cfg.maxCategories) s.cats.add(c);
     paintCats(app, s);
   });
+
+  const licenseSel = app.querySelector("#licenseSel");
+  licenseSel.onchange = () => {
+    const other = licenseSel.value === "__other";
+    app.querySelector("#license").hidden = !other;
+    if (other) app.querySelector("#license").focus();
+  };
+  setLicense(app, DEFAULT_LICENSE);
 
   const icon = app.querySelector("#icon");
   icon.onchange = async () => {
@@ -226,6 +256,21 @@ export function paintDesc(app, s) {
   app.querySelector("#descRemove").hidden = !s.descImage;
 }
 
+export function setLicense(app, value) {
+  const sel = app.querySelector("#licenseSel");
+  const custom = app.querySelector("#license");
+  const v = (value || "").trim() || DEFAULT_LICENSE;
+  const known = LICENSES.some(([id]) => id === v);
+  sel.value = known ? v : "__other";
+  custom.value = known ? "" : v;
+  custom.hidden = known;
+}
+
+function getLicense(app) {
+  const sel = app.querySelector("#licenseSel").value;
+  return sel === "__other" ? app.querySelector("#license").value.trim() : sel;
+}
+
 export function setIcon(app, url) {
   const img = app.querySelector("#iconThumb");
   img.hidden = !url;
@@ -269,10 +314,9 @@ export async function payload(app, s, mode) {
   if (description || mode === "edit") files.push(["description.md", utf8(description + "\n")]);
   if (s.icon) files.push([`icon.${ext(s.icon)}`, await s.icon.arrayBuffer()]);
 
+  meta.license = getLicense(app);
   if (mode === "new") {
     meta.pojarush = app.querySelector("#pojarush").value;
-    const license = app.querySelector("#license").value.trim();
-    if (license) meta.license = license;
     const changelog = app.querySelector("#changelog").value.trim();
     if (changelog) meta.changelog = changelog;
   }
@@ -283,7 +327,7 @@ export function validateFields(app, mode) {
   const summary = app.querySelector("#summary").value.trim();
   const source = app.querySelector("#source").value.trim();
   if (!summary) return t("up_needSummary");
-  if (mode === "new" && !app.querySelector("#licenseRow").hidden && !app.querySelector("#license").value.trim()) return t("up_needLicense");
+  if (!getLicense(app)) return t("up_needLicense");
   if (source && !safeUrl(source)) return t("up_badSource");
   return "";
 }

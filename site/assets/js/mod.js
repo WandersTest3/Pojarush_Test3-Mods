@@ -157,7 +157,7 @@ function render(p, revoked, cfg) {
   const revokedAll = (index.revoked || []).some(r => r.id === id && !r.sha256);
   const p = (index.projects || []).find(x => x.id === id && x.kind === "mod");
   if (!p || revokedAll) {
-    app.innerHTML = `<div class="notice box">${esc(t("notFound"))}<p><a class="btn" href="./">${esc(t("backToList"))}</a></p></div>`;
+    app.innerHTML = `<div class="notice box">${esc(t("notFound"))}<p class="muted">${esc(t("notFoundWait"))}</p><p><a class="btn" href="./">${esc(t("backToList"))}</a></p></div>`;
     return;
   }
   const revoked = new Set((index.revoked || []).filter(r => r.id === id && r.sha256).map(r => r.sha256));

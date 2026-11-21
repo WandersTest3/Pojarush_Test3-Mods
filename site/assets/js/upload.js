@@ -1,5 +1,5 @@
-import { ICONS, auth, chrome, config, esc, fmtSize, iconUrl, loadIndex, safeUrl, sideTag, t, typeTag } from "./core.js";
-import { MIB, bindFields, fieldsHtml, newState, paintCats, paintDesc, paintGallery, payload, sendPR, setIcon, showError, stepsView, validateFields } from "./form.js";
+import { ICONS, auth, chrome, config, esc, fmtSize, iconUrl, loadIndex, safeUrl, sheet, sideTag, t, typeTag } from "./core.js";
+import { MIB, bindFields, setLicense, fieldsHtml, newState, paintCats, paintDesc, paintGallery, payload, sendPR, setIcon, showError, stepsView, validateFields } from "./form.js";
 import { readHmod } from "./hmod.js";
 
 chrome("upload");
@@ -98,19 +98,45 @@ async function pickHmod(file) {
   const pojarush = site.min_pojarush?.[existing?.versions?.[0]?.version];
   if (pojarush && cfg.pojarushVersions.includes(pojarush)) app.querySelector("#pojarush").value = pojarush;
 
-  const hasLicense = typeof m.license === "string" && m.license.trim();
-  app.querySelector("#licenseRow").hidden = Boolean(hasLicense);
-  app.querySelector("#license").value = hasLicense ? "" : existing?.license || "";
+  setLicense(app, (typeof m.license === "string" && m.license.trim()) || existing?.license || "");
   const src = m.contact?.sources || m.contact?.homepage || "";
   const kept = existing && !existing.source.startsWith(cfg.siteUrl) ? existing.source : "";
   app.querySelector("#source").value = safeUrl(src) || kept;
   app.querySelector("#fields").hidden = false;
 }
 
+function confirmRights() {
+  return new Promise(resolve => {
+    const ask = sheet(`<h2>${esc(t("pc_title"))}</h2>
+      <p>${esc(t("pc_question"))}</p>
+      <button class="btn primary" data-a="yes">${esc(t("pc_yes"))}</button>
+      <button class="btn" data-a="no">${esc(t("pc_no"))}</button>`);
+    let done = false;
+    const finish = v => { if (done) return; done = true; watch.disconnect(); resolve(v); };
+    const watch = new MutationObserver(() => { if (!ask.el.isConnected) finish(false); });
+    watch.observe(document.body, { childList: true });
+    ask.el.querySelector('[data-a="yes"]').onclick = () => { finish(true); ask.close(); };
+    ask.el.querySelector('[data-a="no"]').onclick = () => {
+      finish(false);
+      ask.close();
+      const why = sheet(`<h2>${esc(t("pc_noTitle"))}</h2>
+        <p>${esc(t("pc_no1"))}</p>
+        <p>${esc(t("pc_no2"))}</p>
+        <p>${esc(t("pc_no3"))}</p>
+        <button class="btn" data-a="close">${esc(t("close"))}</button>`);
+      why.el.querySelector('[data-a="close"]').onclick = why.close;
+    };
+  });
+}
+
 async function publish() {
   if (s.busy || !s.mod) return;
   const problem = validateFields(app, "new");
   if (problem) return showError(app, problem);
+  s.busy = true;
+  const agreed = await confirmRights();
+  s.busy = false;
+  if (!agreed) return;
   s.busy = true;
   const m = s.mod.manifest;
   const { meta, files } = await payload(app, s, "new");

@@ -42,6 +42,8 @@ Defined in `site/config.json`: `.hmod` up to 5 MiB, icon up to 2 MiB (at least 8
 - `mod.html?id=<id>`: description, gallery (up to 5 images), changelog, versions and details. The image starred in the gallery becomes the card banner.
 - `user.html?u=<login>`: the creator's profile with all of their mods.
 - `edit.html?id=<id>`: mod owners only. Sends a pull request with `edits/<id>/edit.json` (and images/description); the bot checks the owner and updates the registry without creating a release.
+- The license is chosen from a list (default MIT, or a custom text) at upload and in the edit page.
+- Before posting, the uploader must confirm the mod does not violate the rights of any ported Java mod.
 - Uploading asks for the minimum Pojarush_Test3 version (`pojarushVersions` in `site/config.json`, currently only `2.0.0`).
 - The Discord link and the footer notices come from `site/config.json` (`discord`) and the texts in `assets/js/core.js` and `assets/js/i18n.js`.
 - Deleting: on the edit page, owners can delete a version (`delete_versions`) or the whole page (`delete_mod`). The bot removes the registry entry and images and, after the commit, deletes the matching releases.
