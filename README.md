@@ -9,6 +9,7 @@ A site for `.hmod` mods for the Pojarush launcher: https://wanderstest3.github.i
 - The `Publish` Action validates the `.hmod` with Horizon's own code (`tools/hmod-inspect`, built from `WandersTest3/Pojarush_Test3`), creates the Release `<id>-<version>` with the file, writes `registry/<id>.json` and the images in `site/mods/<id>/`, comments the result and closes the pull request. Then it publishes the site.
 - Only a mod's owners (`owners`) can submit new versions of it. A published version cannot be submitted again.
 - `index.json` follows the schema 1 format of Horizon's registry (`docs/api/mod-index.md`). The launcher can read this index with `HORIZON_MOD_INDEX=https://wanderstest3.github.io/Pojarush_Test3-Mods/index.json`.
+- Each mod gets a closed issue "Likes: <id>" created by the bot; the heart button on the mod page adds or removes a heart reaction on it (GitHub login required). The `Likes` Action creates the missing issues for existing mods.
 - The `Site` Action publishes the site on every push to `main`, every 6 hours (to refresh download counts) and when called by `Publish`.
 
 ## Setup (one time)

@@ -1,3 +1,4 @@
+import { likeButton, likeStat, bindLike } from "./likes.js";
 import { ICONS, auth, avatarUrl, chrome, config, creator, esc, fmtAgo, fmtDate, fmtNumber, fmtSize, iconUrl, loadIndex, localized, markdown, profileHref, safeUrl, sheet, sideTag, t, typeTag } from "./core.js";
 
 chrome("");
@@ -54,11 +55,13 @@ function render(p, revoked, cfg) {
     </article>
     <div class="mod-bar">
       ${latest ? `<a class="round primary" href="${esc(latest.file.url)}" download aria-label="${esc(t("download"))} ${esc(latest.version)} · ${esc(fmtSize(latest.file.size))}" title="${esc(t("download"))} ${esc(latest.version)} · ${esc(fmtSize(latest.file.size))}">${ICONS.download}</a>` : ""}
+      ${likeButton(p)}
       ${owns ? `<a class="round" href="edit.html?id=${encodeURIComponent(p.id)}" aria-label="${esc(t("editPage"))}" title="${esc(t("editPage"))}">${ICONS.edit}</a>` : ""}
       <button type="button" class="round" id="menuBtn" aria-label="${esc(t("menu"))}">${ICONS.dots}</button>
     </div>
     <div class="mod-stats">
       <span class="stat">${ICONS.download}${esc(t("downloads", { n: fmtNumber(p.downloads || 0) }))}</span>
+      ${likeStat(p)}
       ${site.updated ? `<span class="dotsep"></span><span class="stat">${ICONS.clock}${esc(t("updatedAgo", { t: fmtAgo(site.updated) }))}</span>` : ""}
     </div>
     ${who ? `<a class="creator" href="${esc(profileHref(who))}">
@@ -129,6 +132,7 @@ function render(p, revoked, cfg) {
     if (b) lightbox(b.dataset.src);
   });
 
+  bindLike(app, p, cfg);
   app.querySelector("#menuBtn").onclick = () => {
     const pageUrl = new URL(`mod.html?id=${encodeURIComponent(p.id)}`, cfg.siteUrl).href;
     const sh = sheet(`<h2>${esc(l.name)}</h2>

@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import subprocess
 from pathlib import Path
@@ -49,3 +50,19 @@ def load_revoked():
 def write_json(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def make_like_issue(mod_id):
+    repo = os.environ.get("REPO")
+    if not repo:
+        return None
+    page = f"{CONFIG['siteUrl']}mod.html?id={mod_id}"
+    try:
+        url = run(["gh", "issue", "create", "-R", repo, "--title", f"Likes: {mod_id}",
+                   "--body", f"Heart reactions on this issue are the likes of {page}. Please do not comment here."]).strip()
+        number = int(url.rstrip("/").rsplit("/", 1)[1])
+    except Exception:
+        return None
+    subprocess.run(["gh", "issue", "close", str(number), "-R", repo, "-r", "not planned"],
+                   capture_output=True, text=True)
+    return number

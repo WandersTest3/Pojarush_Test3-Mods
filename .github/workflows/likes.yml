@@ -1,0 +1,58 @@
+name: Likes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/likes.py
+      - .github/workflows/likes.yml
+  schedule:
+    - cron: "43 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  likes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Create like threads
+        run: python scripts/likes.py
+      - name: Commit
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A registry
+          if git diff --cached --quiet; then echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          git commit -m "Add like threads"
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push origin HEAD:main; then echo "changed=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+            sleep 5
+          done
+          exit 1
+
+  deploy:
+    needs: likes
+    if: needs.likes.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/site.yml

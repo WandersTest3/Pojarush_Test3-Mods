@@ -13,7 +13,7 @@ from pathlib import Path
 from PIL import Image
 
 from common import (
-    CONFIG, ID_RE, REGISTRY, ROOT, SITE, VERSION_RE, clean, https, load_projects, run, write_json,
+    CONFIG, ID_RE, REGISTRY, ROOT, SITE, VERSION_RE, clean, https, load_projects, make_like_issue, run, write_json,
 )
 
 Image.MAX_IMAGE_PIXELS = 40_000_000
@@ -380,6 +380,10 @@ def edit(mod_id, data, meta):
     if description is not None:
         existing["description"] = description
     site["categories"] = pick_categories(meta, site.get("categories", []))
+    if not site.get("like_issue"):
+        like = make_like_issue(mod_id)
+        if like:
+            site["like_issue"] = like
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
         assets = SITE / "mods" / mod_id
@@ -497,6 +501,7 @@ def main():
                 "sha256": hashlib.sha256(hmod_bytes).hexdigest(),
             },
         }
+        like = site_old.get("like_issue") or make_like_issue(mod_id)
         project = {
             "id": mod_id,
             "kind": "mod",
@@ -513,6 +518,7 @@ def main():
                 "categories": categories,
                 "icon_file": icon_rel,
                 **media,
+                **({"like_issue": like} if like else {}),
                 "min_pojarush": {**site_old.get("min_pojarush", {}), version: pojarush},
                 "code": bool(m["code"]),
                 "contact": {k: v for k, v in contact.items() if https(v)},

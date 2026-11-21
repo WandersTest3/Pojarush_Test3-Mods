@@ -127,6 +127,9 @@ main { max-width: 1160px; margin: 0 auto; padding: 8px 16px 0; }
 .mod-bar { display: flex; align-items: center; gap: 12px; margin-top: 18px; }
 .round { display: inline-grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; border: 1px solid var(--line); background: var(--raised); color: var(--text); cursor: pointer; text-decoration: none; padding: 0; }
 .round svg { width: 28px; height: 28px; }
+.round.like[aria-pressed="true"] { color: #ff6b8a; border-color: #7a2c43; background: #2a1520; }
+.round.like:disabled { opacity: 0.6; cursor: default; }
+.like-err { font-size: 0.85rem; }
 .round.primary { background: var(--brand); border-color: var(--brand-hi); color: #fff; }
 .round.primary:hover { background: var(--brand-hi); }
 .mod-stats { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; color: var(--muted); font-size: 1.05rem; margin: 16px 0 14px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
