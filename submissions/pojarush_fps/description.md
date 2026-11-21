@@ -1,0 +1,1 @@
+Frames per second anywhere on the screen, at any size, with the slowest frame and the 1% low if you like. Drag it with the finger or the mouse at any time, in game or in any menu. Turns Horizon's own overlay off.

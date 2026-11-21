@@ -1,0 +1,25 @@
+{
+  "summary": "Frames per second anywhere on the screen, at any size, with the slowest frame and the 1% low if you like. Drag it with the finger or the mouse at any time, in g",
+  "categories": [
+    "hud",
+    "game-mechanics",
+    "utility"
+  ],
+  "source": "https://github.com/WandersTest3/Pojarush_Test3/tree/main/horizon/mods/pojarush-fps",
+  "gallery": [
+    {
+      "file": "gallery-1.jpg"
+    },
+    {
+      "file": "gallery-2.jpg"
+    },
+    {
+      "file": "gallery-3.jpg"
+    }
+  ],
+  "featured": 2,
+  "description_image": {
+    "file": "description-image.jpg"
+  },
+  "pojarush": "2.0.0"
+}
