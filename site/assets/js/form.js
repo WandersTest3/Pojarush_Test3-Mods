@@ -26,12 +26,12 @@ function imageSize(file) {
   });
 }
 
-async function checkImage(cfg, file, minSide) {
+async function checkImage(cfg, file, minSide, tooSmall = "up_tooSmall") {
   if (!IMAGE_TYPES[file.type]) return `${file.name}: PNG, JPEG, WEBP`;
   if (file.size > cfg.maxImageMiB * MIB) return t("up_tooBig", { file: file.name, n: cfg.maxImageMiB });
   const size = await imageSize(file);
   if (!size) return `${file.name}: PNG, JPEG, WEBP`;
-  if (minSide && Math.min(...size) < minSide) return t("up_tooSmall", { file: file.name });
+  if (minSide && Math.min(...size) < minSide) return t(tooSmall, { file: file.name, n: minSide });
   return "";
 }
 
@@ -128,7 +128,7 @@ export function bindFields(app, cfg, s, mode) {
     const f = icon.files[0];
     icon.value = "";
     if (!f) return;
-    const bad = await checkImage(cfg, f, 0);
+    const bad = await checkImage(cfg, f, cfg.minIconPx, "up_iconSmall");
     if (bad) return err(bad);
     err("");
     s.icon = f;

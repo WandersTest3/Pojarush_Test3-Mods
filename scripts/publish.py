@@ -20,6 +20,7 @@ Image.MAX_IMAGE_PIXELS = 40_000_000
 
 MIB = 1 << 20
 IMAGE_RE = r"(png|jpe?g|webp)"
+ICON_TARGET = 128
 FILE_RE = re.compile(rf"^(icon|description-image|gallery-[1-3])\.{IMAGE_RE}$")
 TEXT_FILES = {
     "submissions": {"mod.hmod", "submission.json", "description.md"},
@@ -149,8 +150,13 @@ def open_image(data, label):
 
 def save_icon(data, out):
     img = open_image(data, "icon").convert("RGBA")
+    if min(img.size) < CONFIG["minIconPx"]:
+        raise Reject(f"The icon is too small. Use at least {CONFIG['minIconPx']}×{CONFIG['minIconPx']} px.")
     side = max(img.size)
-    if side > 256:
+    if side < ICON_TARGET:
+        factor = -(-ICON_TARGET // side)
+        img = img.resize((img.width * factor, img.height * factor), Image.NEAREST)
+    elif side > 256:
         scale = 256 / side
         size = (max(1, round(img.width * scale)), max(1, round(img.height * scale)))
         img = img.resize(size, Image.LANCZOS)

@@ -6,6 +6,7 @@
   "discord": "https://discord.gg/CdHqyDxMrz",
   "maxModMiB": 5,
   "maxIconMiB": 2,
+  "minIconPx": 8,
   "maxImageMiB": 8,
   "maxGalleryImages": 3,
   "maxCategories": 3,
