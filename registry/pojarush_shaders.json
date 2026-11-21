@@ -1,0 +1,71 @@
+{
+  "id": "pojarush_shaders",
+  "kind": "mod",
+  "name": "PR Shaders",
+  "summary": "Iris's shortcuts for shader packs: O opens the pack list, K turns shaders on and off, R reloads the pack. Adds a Shader Packs button to Video Settings, opening",
+  "description": "Iris's shortcuts for shader packs: O opens the pack list, K turns shaders on and off, R reloads the pack. Adds a Shader Packs button to Video Settings, opening an Iris-style pack screen. Keys are in Controls > Key Binds.",
+  "authors": [
+    "Wanders_Test3"
+  ],
+  "owners": [
+    "WandersTest3"
+  ],
+  "license": "Mod Test3 License V1.0",
+  "source": "https://github.com/WandersTest3/Pojarush_Test3/tree/main/horizon/mods/pojarush-shaders",
+  "icon": "https://wanderstest3.github.io/Pojarush_Test3-Mods/mods/pojarush_shaders/icon.png",
+  "versions": [
+    {
+      "version": "1.2.1",
+      "published": "2026-11-21",
+      "api": "0.1",
+      "side": "client",
+      "capabilities": [
+        "input",
+        "ui",
+        "storage"
+      ],
+      "game": "26.3",
+      "file": {
+        "name": "pojarush_shaders-1.2.1.hmod",
+        "url": "https://github.com/WandersTest3/Pojarush_Test3-Mods/releases/download/pojarush_shaders-1.2.1/pojarush_shaders-1.2.1.hmod",
+        "size": 24345,
+        "sha256": "162a97f589ed6f60d26dc1c394b8ca5b2f96cee90f618ce6e5e323e297980bc3"
+      }
+    }
+  ],
+  "site": {
+    "categories": [],
+    "icon_file": "mods/pojarush_shaders/icon.png",
+    "gallery": [
+      "mods/pojarush_shaders/g-2257f5dc73.webp",
+      "mods/pojarush_shaders/g-adb07bd5c4.webp",
+      "mods/pojarush_shaders/g-93257f31f8.webp",
+      "mods/pojarush_shaders/g-6ec1df3067.webp",
+      "mods/pojarush_shaders/g-6520e2909b.webp"
+    ],
+    "featured": "mods/pojarush_shaders/g-6520e2909b.webp",
+    "banner": "mods/pojarush_shaders/banner-d374cde6de.webp",
+    "description_image": "mods/pojarush_shaders/d-a2d25b5a5e.webp",
+    "min_pojarush": {
+      "1.2.1": "2.0.0"
+    },
+    "code": true,
+    "contact": {
+      "homepage": "https://github.com/WandersTest3/Pojarush_Test3",
+      "issues": "https://github.com/WandersTest3/Pojarush_Test3/issues",
+      "sources": "https://github.com/WandersTest3/Pojarush_Test3/tree/main/horizon/mods/pojarush-shaders"
+    },
+    "translations": {
+      "pt_br": {
+        "name": "",
+        "summary": "Os atalhos do Iris para shaders: O abre a lista de pacotes, K liga e desliga os shaders, R recarrega o pacote. Adiciona o botão Pacotes de shaders em Gráficos, "
+      },
+      "pt_pt": {
+        "name": "",
+        "summary": "Os atalhos do Iris para shaders: O abre a lista de pacotes, K liga e desliga os shaders, R recarrega o pacote. Adiciona o botão Pacotes de shaders em Gráficos, "
+      }
+    },
+    "created": "2026-11-21T19:46:42Z",
+    "updated": "2026-11-21T19:46:42Z"
+  }
+}
