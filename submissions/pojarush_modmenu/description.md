@@ -1,0 +1,1 @@
+A Mod Menu like Fabric's: the installed mods with icon, name and description on the left, and the picked one's version, authors, license, links and settings on the right, with a search box. Sort A to Z or Z to A and filter by mods with settings, on or off. Open it with its icon in the top right corner of the title screen and the pause menu, or with M (Controls > Key Binds).
