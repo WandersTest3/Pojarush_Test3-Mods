@@ -22,7 +22,7 @@ Before copying anything, read the original's license.
 | adds blocks, items, recipes, loot, tags, textures, lang | **content mod** (page 5) | yes, if the blocks and items can copy a vanilla template |
 | draws a HUD (FPS, coords, keys, armor, potions, minimap) | code mod: `render` / `hud` | yes |
 | adds keybinds that act on the client (zoom, toggles, shortcuts) | code mod: `input` + `render` / `command` | yes |
-| edits the inventory, off hand, hotbar | code mod: `input::inventory`, `swap_offhand`, `open_inventory` | partly: swaps from slots 0-35 to the off hand, not arbitrary slot moves |
+| edits the inventory, off hand, hotbar | code mod: `input::inventory`, `swap_offhand`, `open_inventory`, `select_hotbar`, `swap_hands` | partly: selects a hotbar slot, swaps hands (F), swaps slots 0-35 with the off hand; no arbitrary slot moves |
 | adds screens or settings (Mod Menu style, cosmetics) | code mod: `ui` | yes, within the widget kinds |
 | adds cosmetics (capes, player models, skin layers) | code mod: `render` models | yes, see `acvcape`, `pojarush-3dskinlayers` |
 | adds shaders or shader shortcuts | `.hshader` / OptiFine packs + a `ui` mod | shortcuts yes; GLSL is the shader pack's, not the mod's |

@@ -43,7 +43,7 @@ How to read the "Evidence" column: **reference** = stated in the launcher's API 
 
 Horizon's newer `.hmod` packages (`api = "0.2"` with a `[wasm]` table, such as the official Keystrokes 3.0.1) run through the
 runtime in the launcher's `horizon/vendor/horizon-wasm-mods`, bridged by `horizon/crates/pojarush-wasm-mods`. State as of
-Pojarush 1.11.27, 64-bit only:
+Pojarush 1.11.28, 64-bit only:
 
 | Upstream feature | Pojarush | Detail |
 |---|---|---|
@@ -63,7 +63,7 @@ Pojarush 1.11.27, 64-bit only:
 
 When a wasm mod looks half-working, read `logs/latest.log` for the "unprovided" lines: they name the host call that is missing.
 
-## Not verified on a device (as of Pojarush 1.11.27)
+## Not verified on a device (as of Pojarush 1.11.28)
 
 - How long the first compile of an upstream wasm mod takes on a phone (about 90 s in a debug PC build; 0.4 s from cache).
 - Auto Totem's timings and the inventory open/close path under real survival play.

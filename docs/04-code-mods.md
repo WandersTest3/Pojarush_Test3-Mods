@@ -247,6 +247,8 @@ for event in input::poll() {
 use horizon_mod_sdk::input::{self, ScreenKind};
 
 let stacks = input::inventory();     // slots: 0-8 hotbar, 9-35 inventory, 36-39 armor (feet, legs, chest, head), 40 off hand
+input::select_hotbar(2).ok();            // level 16: select hotbar slot 3 (0-8), as the number keys do
+input::swap_hands();                  // level 16: swap main and off hand, as the F key does
 let totems: u32 = stacks.iter().filter(|s| s.id == "minecraft:totem_of_undying").map(|s| s.count).sum();
 
 input::swap_offhand(slot)?;          // swap slot 0..=35 with the off hand at the end of the tick (like F in the inventory)

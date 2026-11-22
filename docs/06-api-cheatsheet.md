@@ -1,7 +1,7 @@
 # 6. API cheat sheet
 
 Every function a Pojarush code mod can call, with the **API level** it arrived at (the game serves every level up to its
-own; Pojarush 1.11.27 serves **level 15**). The tables below are generated from the launcher's own reference
+own; Pojarush 1.11.28 serves **level 16**). The tables below are generated from the launcher's own reference
 (`horizon/docs/api/mods-reference.md`, itself generated from `horizon.wit` and `api_level.rs`), so the names and levels are
 exact. The full reference, with every record and enum field, is in the launcher repository:
 
@@ -30,6 +30,7 @@ In Rust, call them as `horizon_mod_sdk::<interface>::<function>`; WIT `kebab-cas
 | 13 | 1.11.23 | `game::entities`, `hitboxes_shown`, `render::set_world_shapes`, `hide_hitboxes` |
 | 14 | 1.11.25 | `input::inventory`, `swap_offhand` |
 | 15 | 1.11.27 | `input::current_screen`, `open_inventory`, `close_inventory` |
+| 16 | 1.11.28 | `input::select_hotbar`, `swap_hands` (hotbar slot and the F key) |
 
 (The "Pojarush" column is the launcher version in which the level appeared, from the launcher's commit history.)
 
@@ -135,6 +136,8 @@ Shift + click arrives as `ui_select(id, 0xFFFFFFFF)`.
 | `input::current_screen` | 15 | `func() -> screen-kind` | The screen as of this tick (or frame, for a mod with a `frame` hook). |
 | `input::open_inventory` | 15 | `func()` | Opens the player's inventory screen at the end of the tick, as the inventory key does (vanilla opens it without a packet). |
 | `input::close_inventory` | 15 | `func()` | Closes the player's inventory screen at the end of the tick, as Esc does (`ServerboundContainerClosePacket` for the player's menu). |
+| `input::select_hotbar` | 16 | `func(slot: u32) -> result<_, string>` | Selects hotbar slot `slot` (0 to 8) at the end of the tick, as the number keys do (the server learns of it with the next `ServerboundSetCarriedItemPacket`). |
+| `input::swap_hands` | 16 | `func()` | Swaps the main hand with the off hand at the end of the tick, as the swap-hands key (F) does: on a server it sends `ServerboundPlayerActionPacket` SWAP_ITEM_WITH_OFFHAND and the server answers with both slots. |
 
 ### `render` (render, experimental)
 
