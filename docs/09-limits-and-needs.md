@@ -43,19 +43,25 @@ How to read the "Evidence" column: **reference** = stated in the launcher's API 
 
 Horizon's newer `.hmod` packages (`api = "0.2"` with a `[wasm]` table, such as the official Keystrokes 3.0.1) run through the
 runtime in the launcher's `horizon/vendor/horizon-wasm-mods`, bridged by `horizon/crates/pojarush-wasm-mods`. State as of
-Pojarush 1.11.28, 64-bit only:
+Pojarush 1.11.31, 64-bit only:
 
 | Upstream feature | Pojarush | Detail |
 |---|---|---|
-| Load, compile (in-process, cached) and run | **works** | the first load compiles; later loads use the `.horizon-wasm-cache` folder |
+| Load, compile (in-process, cached) and run | **works** | the first load compiles (it can take minutes on a phone); later loads use the cache in the app's private folder |
 | HUD drawing (`render_gui_post`: fills, text) | **works** | corners and used space are bridged |
+| GUI layers (`register_gui_layers`, `gui_layer_draw`) | **works** | drawn after the HUD; `placement` is not applied yet. Drawing: `fill`, `fill_gradient`, `text`, `item`, `item_stack`, `gui_paint` (fill, gradient, text, push/pop translate and scale) |
+| Client tick (`client_tick_pre`) | **works** | |
+| Crosshair target (`crosshair_target`), block states (`BlockState`, `HostBlockStates`: names, properties, definitions, `has_block_entity`, `requires_correct_tool`), `block_item` / `item_block` | **works** | from the game's registry |
+| Registry keys (`item_key`, `BlockKey`, `EntityTypeKey`) | **works** | completed with the game's blocks, items and entity types |
+| Entities and living (`entity`, name, kind, position, eye, `living`, health, max health, main hand), `local_player` | **partly** | the crosshair's entity and the local player only |
+| Payloads (`ToServer`, `ToClient`) | **absent** | sends answer `UnsupportedPeer`, as a server without the mod; a wasm mod's server half does not run yet |
 | Per-frame hook (`render_frame_pre`) | **works** | |
 | Mouse button hook | **works** | pressed / released |
 | Resources reloaded hook | **works** | |
 | Settings page (labels, clicks) and saved settings | **works** | registered through the upstream phases; stored in a per-mod data folder |
 | Translations from the package's `assets/<id>/lang/*.json` | **works** | |
 | Mappings of vanilla keys (`key.forward`...) | **works** | |
-| Mod keys (`mod_key`), key events (`poll`), `is_down`, `consume_click`, `claim_items` | **stubbed** | return nothing; mods that depend on them lose that feature |
+| Mod keys (`mod_key`, `consume_click`, `poll`, `is_down`, `claim_items`) | **partly** | `mod_key` reports a registered mapping's default key; the others return nothing yet (no key press reaches them) |
 | Config files (`config_files`) | **stubbed** | reading returns "not found" |
 | Anything else the upstream host API offers | **unprovided** | the one call stops, the game keeps running (`guarded`, a panic is caught) |
 | Packages built with another SDK commit | **not verified** | the runtime is pinned to Horizon commit `0a875da`; a package built for a different contract may be refused |
@@ -63,7 +69,7 @@ Pojarush 1.11.28, 64-bit only:
 
 When a wasm mod looks half-working, read `logs/latest.log` for the "unprovided" lines: they name the host call that is missing.
 
-## Not verified on a device (as of Pojarush 1.11.28)
+## Not verified on a device (as of Pojarush 1.11.31)
 
 - How long the first compile of an upstream wasm mod takes on a phone (about 90 s in a debug PC build; 0.4 s from cache).
 - Auto Totem's timings and the inventory open/close path under real survival play.
