@@ -1,0 +1,10 @@
+id = "example_hello_command"
+name = "Example Hello Command"
+version = "1.0.0"
+description = "Adds /hello and /hellocount. The smallest code mod: one command, some state, one chat line."
+authors = ["Wanders_Test3"]
+api = "0.1"
+side = "client"
+capabilities = ["chat"]
+minecraft = "26.3"
+license = "Mod Test3 License V1.0"

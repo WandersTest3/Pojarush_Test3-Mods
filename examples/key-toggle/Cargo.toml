@@ -1,0 +1,19 @@
+[package]
+name = "example-key-toggle"
+version = "1.0.0"
+edition = "2024"
+license-file = "LICENSE.txt"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+horizon-mod-sdk = { path = "../../sdk/horizon-mod-sdk" }
+
+[profile.release]
+opt-level = "s"
+lto = true
+strip = true
+
+[workspace]

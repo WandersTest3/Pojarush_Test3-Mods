@@ -1,0 +1,10 @@
+[[step]]
+expect.commands = ["hello", "hellocount"]
+
+[[step]]
+command = "hello Steve"
+expect.chat = ["Hello, Steve!"]
+
+[[step]]
+command = "hello"
+expect.chat = ["Hello, world!"]

@@ -1,0 +1,11 @@
+[[step]]
+expect.commands = ["timer"]
+
+[[step]]
+ticks = 100
+command = "timer"
+expect.feedback = "Session time 00:00:05"
+
+[[step]]
+command = "timer reset"
+expect.feedback = "Timer reset"

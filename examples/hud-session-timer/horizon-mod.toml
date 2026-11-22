@@ -1,0 +1,14 @@
+id = "example_hud_session_timer"
+name = "Example HUD Session Timer"
+version = "1.0.0"
+description = "A session timer in a corner of the screen with a settings page (corner and on/off), saved between runs. Shows the HUD, settings, storage and commands."
+authors = ["Wanders_Test3"]
+api = "0.1"
+side = "client"
+capabilities = ["render", "ui", "storage"]
+experimental = ["render", "ui"]
+minecraft = "26.3"
+license = "Mod Test3 License V1.0"
+
+[translations.pt_br]
+description = "Um cronômetro da sessão em um canto da tela, com página de ajustes (canto e ligado/desligado) salva entre as execuções."

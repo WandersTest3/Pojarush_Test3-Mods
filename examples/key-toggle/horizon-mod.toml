@@ -1,0 +1,11 @@
+id = "example_key_toggle"
+name = "Example Key Toggle"
+version = "1.0.0"
+description = "A key of its own (J by default, rebindable in Options > Mods) that toggles a line of text in the HUD. Shows input events and the hud panel."
+authors = ["Wanders_Test3"]
+api = "0.1"
+side = "client"
+capabilities = ["hud", "input"]
+experimental = ["input"]
+minecraft = "26.3"
+license = "Mod Test3 License V1.0"

@@ -3,3 +3,7 @@ tools/hmod-inspect/target/
 tools/hmod-inspect/Cargo.lock
 _site/
 __pycache__/
+examples/*/target/
+examples/*/Cargo.lock
+sdk/horizon-mod-sdk/target/
+sdk/horizon-mod-sdk/Cargo.lock

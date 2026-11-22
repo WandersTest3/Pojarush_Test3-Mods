@@ -2,6 +2,10 @@
 
 A site for `.hmod` mods for the Pojarush launcher: https://wanderstest3.github.io/Pojarush_Test3-Mods/
 
+## Make a mod
+
+A full tutorial for people and AI assistants (concepts, code and content mods, API cheat sheet, porting, publishing, limits and an AI playbook) is in [`docs/`](docs/README.md), with four tested examples in [`examples/`](examples) and the SDK copy in [`sdk/`](sdk/horizon-mod-sdk). AI assistants: read [`AGENTS.md`](AGENTS.md).
+
 ## How it works
 
 - The site (`site/`) is static and hosted on GitHub Pages.

@@ -1,0 +1,10 @@
+id = "content_glowing_block"
+name = "Example Glowing Block"
+version = "1.0.0"
+description = "A content mod with no code: a glowing amethyst block and its item, with model, name, loot, recipe and a tag. Shows the data-driven registries."
+authors = ["Wanders_Test3"]
+api = "0.2"
+side = "both"
+capabilities = ["registries"]
+minecraft = "26.3"
+license = "Mod Test3 License V1.0"
